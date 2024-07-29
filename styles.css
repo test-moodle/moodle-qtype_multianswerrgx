@@ -1,0 +1,40 @@
+.que.multianswerrgx .feedbackspan {
+    display: block;
+    max-width: 70%;
+    background: #fff3bf;
+    padding: 0.5em;
+    margin-top: 1em;
+    box-shadow: 0.5em 0.5em 1em #000;
+}
+
+body.ie6 .que.multianswerrgx .feedbackspan,
+body.ie7 .que.multianswerrgx .feedbackspan,
+body.ie8 .que.multianswerrgx .feedbackspan,
+body.ie9 .que.multianswerrgx .feedbackspan {
+    width: 70%;
+}
+
+.que.multianswerrgx .answer .specificfeedback {
+    display: inline;
+    padding: 0 0.7em;
+    background: #fff3bf;
+}
+
+.que.multianswerrgx .answer .specificfeedback * {
+    display: inline;
+    background: #fff3bf;
+}
+
+.que.multianswerrgx .answer .specificfeedback script {
+    display: none;
+}
+
+.que.multianswerrgx .answer div.r0,
+.que.multianswerrgx .answer div.r1 {
+    padding: 0.3em;
+}
+
+.que.multianswerrgx table.answer {
+    margin-bottom: 0;
+    width: 100%;
+}
