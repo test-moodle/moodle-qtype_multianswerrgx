@@ -48,7 +48,7 @@ class qtype_multianswerrgx extends question_type {
      * @return question_automatically_gradable The replacement question class.
      */
     public static function deleted_subquestion_replacement(): question_automatically_gradable {
-        return new class implements question_automatically_gradable {
+        return new class implements question_automatically_gradable { // phpcs:ignore
             /**
              * @var object An anonymous class instance representing the question type.
              */
@@ -61,7 +61,7 @@ class qtype_multianswerrgx extends question_type {
              * the name of the question type as 'subquestion_replacement'.
              */
             public function __construct() {
-                $this->qtype = new class {
+                $this->qtype = new class { // phpcs:ignore
                     /**
                      * Get the name of the question type.
                      *
