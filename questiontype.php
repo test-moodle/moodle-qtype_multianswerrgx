@@ -257,7 +257,32 @@ class qtype_multianswerrgx extends question_type {
         // Unfortunately the code currently simply overwrites existing ones in sequence. This
         // will make re-marking after a re-ordering of wrapped questions impossible and
         // will also create difficulties if questiontype specific tables reference the id.
-
+        if (isset($question->import_process)) {
+            echo'isset($question->import_process)';
+            //die;
+            // Question import. Treat the subquestions as options etc. 16:37 04/08/2024            
+            // first needs to extract questions from question text!
+            $questiontext = array(
+                "text" => $question->questiontext,
+                "format" => $question->questiontextformat,
+                "itemid" => $question->id
+            );
+            // Variable $text is an array [text][format][itemid].
+            //$question = qtype_multianswerrgx_extract_question($text);
+            $qo = qtype_multianswerrgx_extract_question($questiontext);
+            $errors = qtype_multianswerrgx_validate_question($qo);
+            $qo->name = $question->name;
+            $qo->questiontextformat = $question->questiontextformat;            
+            foreach ($qo->options->questions as $subquestion) {
+                $subquestion->parent = $question->id;
+                $subquestion->name = $question->name;
+                $subquestion->context = $question->context;
+                $subquestion->category = $question->category;
+                $subquestion->idnumber = null;
+                $this->save_imported_subquestion($subquestion);
+            }
+        }
+        else {
         // First we get all the existing wrapped questions.
         $oldwrappedquestions = [];
         if (isset($question->oldparent)) {
@@ -344,6 +369,111 @@ class qtype_multianswerrgx extends question_type {
         }
 
         $this->save_hints($question, true);
+        }
+    }
+
+    /**
+     * Taken from the combined questiontype script.
+     * This is a copy-paste of a bit in the middle of qformat_default::importprocess with changes to fit this situation.
+     *
+     * When I came to ugprade this code to Moodle 4.0, I found this comment which is not true:
+     *      "This function will be removed in Moodle 2.6 when core Moodle is refactored so that
+     *       save_question is used to save imported questions."
+     * Clearly that was never done.
+     *
+     * @param $fromimport stdClass  Data from question import.
+     * @return bool|null            null if everything went OK, true if there is an error or false if a notice.
+     */
+
+    protected function save_imported_subquestion($fromimport) {
+        
+        global $USER, $DB, $OUTPUT;
+        echo'protected function save_imported_subquestion($fromimport)';
+
+        $fromimport->stamp = make_unique_id_code();  // Set the unique code (not to be changed).
+        $fromimport->createdby = $USER->id;
+        $fromimport->timecreated = time();
+        $fromimport->modifiedby = $USER->id;
+        $fromimport->timemodified = time();
+        
+        echo '*-*-*-*-*-*-*-*-*-*-fromimport<pre>';
+        print_r($fromimport);
+        echo '</pre>';
+        $fileoptions = [
+            'subdirs' => true,
+            'maxfiles' => -1,
+            'maxbytes' => 0,
+        ];
+        
+        $wrapped = $fromimport;
+        echo '$wrapped->qtype '.$wrapped->qtype;
+        //die;
+        $wrapped = question_bank::get_qtype('shortanswer')->save_question(
+                        $wrapped, clone($wrapped));
+echo '???????????????????????????????????????????';
+        //$fromimport->id = $DB->insert_record('question', $fromimport);
+echo '§§§§§§§§§§§§§§§§§§§§$fromimport->id = §§§§§§§§§§§§§§§§§§§§§§§§§§ '.$fromimport->id;
+
+//now remember to inscrease the sequence and save the multianswerrgx question to DB
+
+        if ($DB->get_manager()->table_exists('question_bank_entries')) {
+            // Moodle 4.x.
+
+            // Create a bank entry for each question imported.
+            $questionbankentry = new \stdClass();
+            $questionbankentry->questioncategoryid = $fromimport->category;
+            $questionbankentry->idnumber = null;
+            $questionbankentry->ownerid = $fromimport->createdby;
+            $questionbankentry->id = $DB->insert_record('question_bank_entries', $questionbankentry);
+
+            // Create a version for each question imported.
+            $questionversion = new \stdClass();
+            $questionversion->questionbankentryid = $questionbankentry->id;
+            $questionversion->questionid = $fromimport->id;
+            $questionversion->version = 1;
+            $questionversion->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+            $questionversion->id = $DB->insert_record('question_versions', $questionversion);
+        }
+
+        if (isset($fromimport->questiontextitemid)) {
+            $fromimport->questiontext = file_save_draft_area_files($fromimport->questiontextitemid,
+                    $fromimport->context->id, 'question', 'questiontext', $fromimport->id,
+                    $fileoptions, $fromimport->questiontext);
+        } else if (isset($fromimport->questiontextfiles)) {
+            foreach ($fromimport->questiontextfiles as $file) {
+                question_bank::get_qtype($fromimport->qtype)->import_file(
+                        $fromimport->context, 'question', 'questiontext', $fromimport->id, $file);
+            }
+        }
+        if (isset($fromimport->generalfeedbackitemid)) {
+            $fromimport->generalfeedback = file_save_draft_area_files($fromimport->generalfeedbackitemid,
+                    $fromimport->context->id, 'question', 'generalfeedback', $fromimport->id,
+                    $fileoptions, $fromimport->generalfeedback);
+        } else if (isset($fromimport->generalfeedbackfiles)) {
+            foreach ($fromimport->generalfeedbackfiles as $file) {
+                question_bank::get_qtype($fromimport->qtype)->import_file(
+                        $fromimport->context, 'question', 'generalfeedback', $fromimport->id, $file);
+            }
+        }
+        $DB->update_record('question', $fromimport);
+
+        // Now to save all the answers and type-specific options.
+        $result = question_bank::get_qtype($fromimport->qtype)->save_question_options($fromimport);
+
+        if (!empty($result->error)) {
+            echo $OUTPUT->notification($result->error);
+            // Can't use $transaction->rollback(); since it requires an exception,
+            // and I don't want to rewrite this code to change the error handling now.
+            $DB->force_transaction_rollback();
+            return false;
+        }
+
+        if (!empty($result->notice)) {
+            echo $OUTPUT->notification($result->notice);
+            return true;
+        }
+
+        return null;
     }
 
     /**
@@ -476,7 +606,28 @@ class qtype_multianswerrgx extends question_type {
     }
 
     // TODO MDL-999 provide import... if possible.
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+  
+        if (!isset($data['@']['type']) || $data['@']['type'] != 'multianswerrgx') {
+            return false;
+        }
+        $question = $format->import_headers($data);
+        $question->qtype = 'multianswerrgx';
+        // Access the contents of the questiontext field
+        $questiontext_content = $data["#"]["questiontext"][0]["#"]["text"][0]["#"];
+        //echo "Question Text: " . $questiontext_content . "\n";
 
+        // Access the contents of the questiontextrgx field
+        $questiontextrgx_content = $data["#"]["questiontextrgx"][0]["#"]["text"][0]["#"];
+        //echo "Question Text RGX: " . $questiontextrgx_content;
+        $question->questiontext = $questiontextrgx_content;
+        
+        //echo 'question <pre>';
+        //print_r($question);
+        //echo '</pre>';
+        //die;
+        return $question;
+    }
     /**
      * Move files related to a question to a new context.
      *
