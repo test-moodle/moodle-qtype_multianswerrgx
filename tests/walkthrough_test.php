@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/multianswerrgx/questiontype.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_contains_subq_status(question_state $state) {
         return new \question_pattern_expectation('~' .
@@ -59,8 +59,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Save in incomplete answer.
-        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '',
-                'sub3_answer' => '', 'sub4_answer' => ''));
+        $this->process_submission(['sub1_answer' => '1', 'sub2_answer' => '',
+                'sub3_answer' => '', 'sub4_answer' => '']);
 
         // Verify.
         $this->check_current_state(question_state::$invalid);
@@ -71,8 +71,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_validation_error_expectation());
 
         // Save a partially correct answer.
-        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '1',
-                'sub3_answer' => '1', 'sub4_answer' => '1'));
+        $this->process_submission(['sub1_answer' => '1', 'sub2_answer' => '1',
+                'sub3_answer' => '1', 'sub4_answer' => '1']);
 
         // Verify.
         $this->check_current_state(question_state::$complete);
@@ -138,7 +138,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Save a the correct answer.
-        $this->process_submission(array('sub1_answer' => '0'));
+        $this->process_submission(['sub1_answer' => '0']);
 
         // Verify.
         $this->check_current_state(question_state::$complete);
@@ -177,7 +177,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
 
         // Save a the correct answer.
-        $this->process_submission(array('sub1_answer' => '42'));
+        $this->process_submission(['sub1_answer' => '42']);
 
         // Verify.
         $this->check_current_state(question_state::$complete);
@@ -204,11 +204,11 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
         // Create a multianswerrgx question.
         $q = \test_question_maker::make_question('multianswerrgx', 'fourmc');
-        $q->hints = array(
+        $q->hints = [
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
-        );
-        $choices = array('0' => 'California', '1' => 'Arizona');
+        ];
+        $choices = ['0' => 'California', '1' => 'Arizona'];
 
         $this->start_attempt_at_question($q, 'interactive', 4);
 
@@ -232,8 +232,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, null, true));
 
         // Submit a completely wrong response.
-        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '0',
-                'sub3_answer' => '1', 'sub4_answer' => '0', '-submit' => 1));
+        $this->process_submission(['sub1_answer' => '1', 'sub2_answer' => '0',
+                'sub3_answer' => '1', 'sub4_answer' => '0', '-submit' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
@@ -265,9 +265,9 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assert($this->get_contains_try_again_button_expectation(false), $html);
 
         // Try again.
-        $this->process_submission(array('sub1_answer' => '',
+        $this->process_submission(['sub1_answer' => '',
                 'sub2_answer' => '', 'sub3_answer' => '',
-                'sub4_answer' => '', '-tryagain' => 1));
+                'sub4_answer' => '', '-tryagain' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
@@ -284,8 +284,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, null, true));
 
         // Submit a partially wrong response.
-        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '1',
-                'sub3_answer' => '1', 'sub4_answer' => '1', '-submit' => 1));
+        $this->process_submission(['sub1_answer' => '1', 'sub2_answer' => '1',
+                'sub3_answer' => '1', 'sub4_answer' => '1', '-submit' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
@@ -309,9 +309,9 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, 1, false));
 
         // Try again.
-        $this->process_submission(array('sub1_answer' => '',
+        $this->process_submission(['sub1_answer' => '',
                 'sub2_answer' => '1', 'sub3_answer' => '',
-                'sub4_answer' => '1', '-tryagain' => 1));
+                'sub4_answer' => '1', '-tryagain' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
@@ -332,11 +332,11 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
         // Create a multianswerrgx question.
         $q = \test_question_maker::make_question('multianswerrgx', 'fourmc');
-        $q->hints = array(
+        $q->hints = [
                 new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, false, true),
                 new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
-        );
-        $choices = array('0' => 'California', '1' => 'Arizona');
+        ];
+        $choices = ['0' => 'California', '1' => 'Arizona'];
 
         $this->start_attempt_at_question($q, 'interactive', 4);
 
@@ -360,7 +360,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, null, true));
 
         // Submit an incomplete response response.
-        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '1', '-submit' => 1));
+        $this->process_submission(['sub1_answer' => '1', 'sub2_answer' => '1', '-submit' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$invalid);
@@ -378,7 +378,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub3_answer', $choices, null, true),
                 $this->get_contains_select_expectation('sub4_answer', $choices, null, true));
         $this->render();
-        $a = array('mark' => '0.00', 'max' => '1.00');
+        $a = ['mark' => '0.00', 'max' => '1.00'];
         $this->assertDoesNotMatchRegularExpression('~' . preg_quote(get_string('markoutofmax', 'question', $a), '~') . '~',
                 $this->currentoutput);
         $a['mark'] = '1.00';
@@ -390,11 +390,11 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
         // Create a multianswerrgx question.
         $q = \test_question_maker::make_question('multianswerrgx', 'fourmc');
-        $q->hints = array(
+        $q->hints = [
             new question_hint_with_parts(11, 'This is the first hint.', FORMAT_HTML, true, true),
             new question_hint_with_parts(12, 'This is the second hint.', FORMAT_HTML, true, true),
-        );
-        $choices = array('0' => 'California', '1' => 'Arizona');
+        ];
+        $choices = ['0' => 'California', '1' => 'Arizona'];
 
         $this->start_attempt_at_question($q, 'interactive', 12);
 
@@ -417,8 +417,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, null, true));
 
         // Submit an answer with two right, and two wrong.
-        $this->process_submission(array('sub1_answer' => '1', 'sub2_answer' => '1',
-                'sub3_answer' => '1', 'sub4_answer' => '1', '-submit' => 1));
+        $this->process_submission(['sub1_answer' => '1', 'sub2_answer' => '1',
+                'sub3_answer' => '1', 'sub4_answer' => '1', '-submit' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
@@ -437,13 +437,13 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
         // Check that extract responses will return the reset data.
         $prefix = $this->quba->get_field_prefix($this->slot);
-        $this->assertEquals(array('sub1_answer' => 1),
-                $this->quba->extract_responses($this->slot, array($prefix . 'sub1_answer' => 1)));
+        $this->assertEquals(['sub1_answer' => 1],
+                $this->quba->extract_responses($this->slot, [$prefix . 'sub1_answer' => 1]));
 
         // Do try again.
-        $this->process_submission(array('sub1_answer' => '',
+        $this->process_submission(['sub1_answer' => '',
                 'sub2_answer' => '1', 'sub3_answer' => '',
-                'sub4_answer' => '1', '-tryagain' => 1));
+                'sub4_answer' => '1', '-tryagain' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
@@ -460,8 +460,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', true));
 
         // Submit the right answer.
-        $this->process_submission(array('sub1_answer' => '0', 'sub2_answer' => '1',
-                'sub3_answer' => '0', 'sub4_answer' => '1', '-submit' => 1));
+        $this->process_submission(['sub1_answer' => '0', 'sub2_answer' => '1',
+                'sub3_answer' => '0', 'sub4_answer' => '1', '-submit' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
@@ -493,10 +493,10 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_validation_error_expectation());
 
         // Save in incomplete answer.
-        $this->process_submission(array('sub1_choice0' => '1', 'sub1_choice1' => '1',
+        $this->process_submission(['sub1_choice0' => '1', 'sub1_choice1' => '1',
                                         'sub1_choice2' => '', 'sub1_choice3' => '',
                                         'sub1_choice4' => '', 'sub1_choice5' => '1',
-                                        ));
+                                        ]);
 
         // Verify.
         $this->check_current_state(question_state::$invalid);
@@ -507,13 +507,13 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_contains_validation_error_expectation());
 
         // Save a partially correct answer.
-        $this->process_submission(array('sub1_choice0' => '1', 'sub1_choice1' => '',
+        $this->process_submission(['sub1_choice0' => '1', 'sub1_choice1' => '',
                                         'sub1_choice2' => '', 'sub1_choice3' => '',
                                         'sub1_choice4' => '1', 'sub1_choice5' => '1',
                                         'sub2_choice0' => '', 'sub2_choice1' => '',
                                         'sub2_choice2' => '', 'sub2_choice3' => '',
                                         'sub2_choice4' => '1',
-                                  ));
+                                  ]);
 
         // Verify.
         $this->check_current_state(question_state::$complete);

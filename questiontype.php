@@ -257,22 +257,21 @@ class qtype_multianswerrgx extends question_type {
         // Unfortunately the code currently simply overwrites existing ones in sequence. This
         // will make re-marking after a re-ordering of wrapped questions impossible and
         // will also create difficulties if questiontype specific tables reference the id.
+
+        // First deal with importing multianswerrgx questions using XML Moodle format.
         if (isset($question->import_process)) {
-            echo 'isset($question->import_process)';
-            //die;
-            // Question import. Treat the subquestions as options etc. 16:37 04/08/2024            
-            // first needs to extract questions from question text!
-            $questiontext = array(
+            /* In the export_to_xml process questiontext has been saved as questiontextrgx
+             * so now we must restore it from the exported file.
+            */
+            $questiontext = [
                 "text" => $question->questiontextrgx,
                 "format" => $question->questiontextformat,
-                "itemid" => $question->id
-            );
-            // Variable $text is an array [text][format][itemid].
-            //$question = qtype_multianswerrgx_extract_question($text);
+                "itemid" => $question->id,
+            ];
             $qo = qtype_multianswerrgx_extract_question($questiontext);
             $errors = qtype_multianswerrgx_validate_question($qo);
             $qo->name = $question->name;
-            $qo->questiontextformat = $question->questiontextformat;            
+            $qo->questiontextformat = $question->questiontextformat;
             $sequence = [];
             foreach ($qo->options->questions as $subquestion) {
                 $subquestion->parent = $question->id;
@@ -284,139 +283,109 @@ class qtype_multianswerrgx extends question_type {
                 $sequence[] = $subquestionsave;
             }
             if (!empty($sequence)) {
-            $multianswerrgx = new stdClass();
-            $multianswerrgx->question = $question->id;
-            $multianswerrgx->sequence = implode(',', $sequence);            
-            $DB->insert_record('question_multianswerrgx', $multianswerrgx);
+                $multianswerrgx = new stdClass();
+                $multianswerrgx->question = $question->id;
+                $multianswerrgx->sequence = implode(',', $sequence);
+                $DB->insert_record('question_multianswerrgx', $multianswerrgx);
             }
-
-            echo 'import done ';
-            
-            // Now we must save the multianswerrgx question itself in tables:
-            // mdl_question and mdl_question_multianswerrgx
-                /*
-                $question = qtype_multianswerrgx_extract_question($form->questiontext);
-                $question->category = $form->category;
-                $form->defaultmark = $question->defaultmark;
-                $form->questiontext = $question->questiontext;
-                $form->questiontextformat = 0;
-                $form->options = clone($question->options);
-                unset($question->options);
-                */
-                echo 'function save_imported_question 296 <pre>';
-                echo '***question***';
-                print_r($question);
-                echo '***qo***';
-                print_r($qo);
-                echo '</pre>';
-                return;
-                
-                return parent::save_question($question, $form);
-            
-        }
-        else {
-        // First we get all the existing wrapped questions.
-        $oldwrappedquestions = [];
-        if (isset($question->oldparent)) {
-            if ($oldwrappedids = $DB->get_field('question_multianswerrgx', 'sequence',
+            return;
+        } else {
+            // First we get all the existing wrapped questions.
+            $oldwrappedquestions = [];
+            if (isset($question->oldparent)) {
+                if ($oldwrappedids = $DB->get_field('question_multianswerrgx', 'sequence',
                 ['question' => $question->oldparent])) {
-                $oldwrappedidsarray = explode(',', $oldwrappedids);
-                $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
+                    $oldwrappedidsarray = explode(',', $oldwrappedids);
+                    $unorderedquestions = $DB->get_records_list('question', 'id', $oldwrappedidsarray);
 
-                // Keep the order as given in the sequence field.
-                foreach ($oldwrappedidsarray as $questionid) {
-                    if (isset($unorderedquestions[$questionid])) {
-                        $oldwrappedquestions[] = $unorderedquestions[$questionid];
-                    }
-                }
-            }
-        }
-
-        $sequence = [];
-        foreach ($question->options->questions as $wrapped) {
-            if (!empty($wrapped)) {
-                // If we still have some old wrapped question ids, reuse the next of them.
-                $wrapped->id = 0;
-                if (is_array($oldwrappedquestions) &&
-                        $oldwrappedquestion = array_shift($oldwrappedquestions)) {
-                    $wrapped->oldid = $oldwrappedquestion->id;
-                    if ($oldwrappedquestion->qtype != $wrapped->qtype) {
-                        switch ($oldwrappedquestion->qtype) {
-                            case 'multichoice':
-                                $DB->delete_records('qtype_multichoice_options',
-                                        ['questionid' => $oldwrappedquestion->id]);
-                                break;
-                            case 'shortanswer':
-                                $DB->delete_records('qtype_shortanswer_options',
-                                        ['questionid' => $oldwrappedquestion->id]);
-                                break;
-                            case 'regexp':
-                                $DB->delete_records('qtype_regexp_options',
-                                        ['questionid' => $oldwrappedquestion->id]);
-                                break;
-                            case 'numerical':
-                                $DB->delete_records('question_numerical',
-                                        ['question' => $oldwrappedquestion->id]);
-                                break;
-                            default:
-                                throw new moodle_exception('qtypenotrecognized',
-                                        'qtype_multianswerrgx', '', $oldwrappedquestion->qtype);
+                    // Keep the order as given in the sequence field.
+                    foreach ($oldwrappedidsarray as $questionid) {
+                        if (isset($unorderedquestions[$questionid])) {
+                            $oldwrappedquestions[] = $unorderedquestions[$questionid];
                         }
                     }
                 }
             }
-            $wrapped->name = $question->name;
-            $wrapped->parent = $question->id;
-            $previousid = $wrapped->id;
-            // Save_question strips this extra bit off the category again.
-            $wrapped->category = $question->category . ',1';
-            $wrapped = question_bank::get_qtype($wrapped->qtype)->save_question(
+
+            $sequence = [];
+            foreach ($question->options->questions as $wrapped) {
+                if (!empty($wrapped)) {
+                    // If we still have some old wrapped question ids, reuse the next of them.
+                    $wrapped->id = 0;
+                    if (is_array($oldwrappedquestions) &&
+                        $oldwrappedquestion = array_shift($oldwrappedquestions)) {
+                        $wrapped->oldid = $oldwrappedquestion->id;
+                        if ($oldwrappedquestion->qtype != $wrapped->qtype) {
+                            switch ($oldwrappedquestion->qtype) {
+                                case 'multichoice':
+                                    $DB->delete_records('qtype_multichoice_options',
+                                        ['questionid' => $oldwrappedquestion->id]);
+                                    break;
+                                case 'shortanswer':
+                                    $DB->delete_records('qtype_shortanswer_options',
+                                        ['questionid' => $oldwrappedquestion->id]);
+                                    break;
+                                case 'regexp':
+                                    $DB->delete_records('qtype_regexp_options',
+                                        ['questionid' => $oldwrappedquestion->id]);
+                                    break;
+                                case 'numerical':
+                                    $DB->delete_records('question_numerical',
+                                        ['question' => $oldwrappedquestion->id]);
+                                    break;
+                                default:
+                                    throw new moodle_exception('qtypenotrecognized',
+                                        'qtype_multianswerrgx', '', $oldwrappedquestion->qtype);
+                            }
+                        }
+                    }
+                }
+                $wrapped->name = $question->name;
+                $wrapped->parent = $question->id;
+                $previousid = $wrapped->id;
+                // Save_question strips this extra bit off the category again.
+                $wrapped->category = $question->category . ',1';
+                $wrapped = question_bank::get_qtype($wrapped->qtype)->save_question(
                     $wrapped, clone($wrapped));
-            $sequence[] = $wrapped->id;
-            if ($previousid != 0 && $previousid != $wrapped->id) {
-                // For some reasons a new question has been created
-                // so delete the old one.
-                question_delete_question($previousid);
+                $sequence[] = $wrapped->id;
+                if ($previousid != 0 && $previousid != $wrapped->id) {
+                    // For some reasons a new question has been created
+                    // so delete the old one.
+                    question_delete_question($previousid);
+                }
             }
-        }
 
-        // Delete redundant wrapped questions.
-        if (is_array($oldwrappedquestions) && count($oldwrappedquestions)) {
-            foreach ($oldwrappedquestions as $oldwrappedquestion) {
-                question_delete_question($oldwrappedquestion->id);
+            // Delete redundant wrapped questions.
+            if (is_array($oldwrappedquestions) && count($oldwrappedquestions)) {
+                foreach ($oldwrappedquestions as $oldwrappedquestion) {
+                    question_delete_question($oldwrappedquestion->id);
+                }
             }
-        }
 
-        if (!empty($sequence)) {
-            $multianswerrgx = new stdClass();
-            $multianswerrgx->question = $question->id;
-            $multianswerrgx->sequence = implode(',', $sequence);
-            if ($oldid = $DB->get_field('question_multianswerrgx', 'id',
+            if (!empty($sequence)) {
+                $multianswerrgx = new stdClass();
+                $multianswerrgx->question = $question->id;
+                $multianswerrgx->sequence = implode(',', $sequence);
+                if ($oldid = $DB->get_field('question_multianswerrgx', 'id',
                     ['question' => $question->id])) {
-                $multianswerrgx->id = $oldid;
-                $DB->update_record('question_multianswerrgx', $multianswerrgx);
-            } else {
-                $DB->insert_record('question_multianswerrgx', $multianswerrgx);
+                    $multianswerrgx->id = $oldid;
+                    $DB->update_record('question_multianswerrgx', $multianswerrgx);
+                } else {
+                    $DB->insert_record('question_multianswerrgx', $multianswerrgx);
+                }
             }
-        }
 
-        $this->save_hints($question, true);
+            $this->save_hints($question, true);
         }
     }
 
     /**
-     * Taken from the combined questiontype script.
-     * This is a copy-paste of a bit in the middle of qformat_default::importprocess with changes to fit this situation.
+     * Saves an imported subquestion to the database.
      *
-     * When I came to ugprade this code to Moodle 4.0, I found this comment which is not true:
-     *      "This function will be removed in Moodle 2.6 when core Moodle is refactored so that
-     *       save_question is used to save imported questions."
-     * Clearly that was never done.
+     * @param object $fromimport The subquestion object to be saved.
      *
-     * @param $fromimport stdClass  Data from question import.
-     * @return bool|null            null if everything went OK, true if there is an error or false if a notice.
+     * @return int The ID of the saved subquestion.
      */
-
     protected function save_imported_subquestion($fromimport) {
         global $USER, $DB, $OUTPUT;
         $fromimport->stamp = make_unique_id_code();  // Set the unique code (not to be changed).
@@ -454,13 +423,7 @@ class qtype_multianswerrgx extends question_type {
         $form->questiontextformat = 0;
         $form->options = clone($question->options);
         unset($question->options);
-        echo 'function save_question 430 <pre>';
-        echo '***question***';
-        print_r($question);
-        echo '***form***';
-        print_r($form);
-        echo '</pre>';
-        
+
         return parent::save_question($question, $form);
     }
 
@@ -571,27 +534,27 @@ class qtype_multianswerrgx extends question_type {
         return $output;
     }
 
-    // TODO MDL-999 provide import... if possible.
+    /**
+     * Imports a question from XML data.
+     *
+     * @param array $data      The XML data to import from.
+     * @param object $question The question object being imported.
+     * @param qformat_xml $format The format object for XML import.
+     * @param mixed $extra     Additional data for import (optional).
+     *
+     * @return mixed The imported question object or false if the question type is not 'multianswerrgx'.
+     */
     public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
-  
         if (!isset($data['@']['type']) || $data['@']['type'] != 'multianswerrgx') {
             return false;
         }
         $question = $format->import_headers($data);
         $question->qtype = 'multianswerrgx';
-        // Access the contents of the questiontext field
-        $questiontext_content = $data["#"]["questiontext"][0]["#"]["text"][0]["#"];
-        //echo "Question Text: " . $questiontext_content . "\n";
-
-        // Access the contents of the questiontextrgx field
-        $questiontextrgx_content = $data["#"]["questiontextrgx"][0]["#"]["text"][0]["#"];
-        //echo "Question Text RGX: " . $questiontextrgx_content;
-        //$question->questiontext = $questiontextrgx_content;
-        $question->questiontextrgx = $questiontextrgx_content;
-        echo 'question <pre>';
-        print_r($question);
-        echo '</pre>';
-        //die;
+        // Access the contents of the questiontext field.
+        $questiontextcontent = $data["#"]["questiontext"][0]["#"]["text"][0]["#"];
+        // Access the contents of the questiontextrgx field.
+        $questiontextrgxcontent = $data["#"]["questiontextrgx"][0]["#"]["text"][0]["#"];
+        $question->questiontextrgx = $questiontextrgxcontent;
         return $question;
     }
     /**

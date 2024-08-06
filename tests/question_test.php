@@ -255,7 +255,7 @@ final class question_test extends \advanced_testcase {
         $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
         $this->assertNull($options);
     }
-*/
+    */
     /**
      * Helper method to make a simulated second version of the standard multianswerrgx test question.
      *
