@@ -263,7 +263,7 @@ class qtype_multianswerrgx extends question_type {
             // Question import. Treat the subquestions as options etc. 16:37 04/08/2024            
             // first needs to extract questions from question text!
             $questiontext = array(
-                "text" => $question->questiontext,
+                "text" => $question->questiontextrgx,
                 "format" => $question->questiontextformat,
                 "itemid" => $question->id
             );
@@ -284,14 +284,13 @@ class qtype_multianswerrgx extends question_type {
                 $sequence[] = $subquestionsave;
             }
             if (!empty($sequence)) {
-                $multianswerrgx = new stdClass();
-                $multianswerrgx->question = $question->id;
-                $multianswerrgx->sequence = implode(',', $sequence);            
-                $DB->insert_record('question_multianswerrgx', $multianswerrgx);
+            $multianswerrgx = new stdClass();
+            $multianswerrgx->question = $question->id;
+            $multianswerrgx->sequence = implode(',', $sequence);            
+            $DB->insert_record('question_multianswerrgx', $multianswerrgx);
             }
 
             echo 'import done ';
-            //die;
             
             // Now we must save the multianswerrgx question itself in tables:
             // mdl_question and mdl_question_multianswerrgx
@@ -310,9 +309,9 @@ class qtype_multianswerrgx extends question_type {
                 echo '***qo***';
                 print_r($qo);
                 echo '</pre>';
-                //die;
+                return;
                 
-                //return parent::save_question($question, $form);
+                return parent::save_question($question, $form);
             
         }
         else {
@@ -587,11 +586,11 @@ class qtype_multianswerrgx extends question_type {
         // Access the contents of the questiontextrgx field
         $questiontextrgx_content = $data["#"]["questiontextrgx"][0]["#"]["text"][0]["#"];
         //echo "Question Text RGX: " . $questiontextrgx_content;
-        $question->questiontext = $questiontextrgx_content;
-        
-        //echo 'question <pre>';
-        //print_r($question);
-        //echo '</pre>';
+        //$question->questiontext = $questiontextrgx_content;
+        $question->questiontextrgx = $questiontextrgx_content;
+        echo 'question <pre>';
+        print_r($question);
+        echo '</pre>';
         //die;
         return $question;
     }
