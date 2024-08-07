@@ -57,7 +57,7 @@ class qtype_multianswerrgx_test_helper extends question_test_helper {
         $q->questiontext =
                 'Complete this opening line of verse: "The {#1} and the {#2} went to sea".';
         $q->generalfeedback = 'General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: ' .
-                '"The owl and the pussycat went to sea';
+                '"The owl and the pussycat went to sea"';
         $q->qtype = question_bank::get_qtype('multianswerrgx');
         $q->textfragments = [
             'Complete this opening line of verse: "The ',
@@ -131,7 +131,7 @@ class qtype_multianswerrgx_test_helper extends question_test_helper {
         $qdata->questiontext =
                         'Complete this opening line of verse: "The {#1} and the {#2} went to sea".';
         $qdata->generalfeedback = 'General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: ' .
-                        '"The owl and the pussycat went to sea';
+                        '"The owl and the pussycat went to sea"';
 
         $qdata->defaultmark = 2.0;
         $qdata->qtype = 'multianswerrgx';
@@ -276,7 +276,7 @@ class qtype_multianswerrgx_test_helper extends question_test_helper {
                 '~Wiggly worm#Now you are just being ridiculous!~=Pussy-cat#Well done!}' .
                 ' went to sea".', 'format' => FORMAT_HTML];
         $formdata->generalfeedback = ['text' => 'General feedback: It\'s from "The Owl and the Pussy-cat" ' .
-                'by Lear: "The owl and the pussycat went to sea', 'format' => FORMAT_HTML];
+                'by Lear: "The owl and the pussycat went to sea"', 'format' => FORMAT_HTML];
 
         $formdata->hint = [
             0 => ['text' => 'Hint 1', 'format' => FORMAT_HTML, 'itemid' => 0],

@@ -15,6 +15,7 @@ Feature: Test creating a Multianswerrgx (Cloze) question
       | user    | course | role           |
       | teacher | C1     | editingteacher |
 
+  @javascript
   Scenario: Create a Cloze question
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Embedded answers (Cloze)" question filling the form with:

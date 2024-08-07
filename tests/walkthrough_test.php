@@ -38,12 +38,22 @@ require_once($CFG->dirroot . '/question/type/multianswerrgx/questiontype.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-
+    /**
+     * Gets the status of a sub-question within the given question state.
+     *
+     * @param question_state $state The state of the question.
+     * @return \question_pattern_expectation A new pattern expectation with the quoted default string of the question state.
+     */
     protected function get_contains_subq_status(question_state $state) {
         return new \question_pattern_expectation('~' .
                 preg_quote($state->default_string(true), '~') . '~');
     }
 
+    /**
+     * Test deferred feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_deferred_feedback(): void {
 
         // Create a multianswerrgx question.
@@ -94,6 +104,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
+    /**
+     * Test deferred feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_deferred_feedback_numericalzero_not_answered(): void {
         // Tests the situation found in MDL-35370.
 
@@ -122,6 +137,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
+    /**
+     * Test deferred feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_deferred_feedback_numericalzero_0_answer(): void {
         // Tests the situation found in MDL-35370.
 
@@ -161,6 +181,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
+    /**
+     * Test deferred feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_deferred_feedback_numericalzero_0_wrong(): void {
         // Tests the situation found in MDL-35370.
 
@@ -200,6 +225,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_validation_error_expectation());
     }
 
+    /**
+     * Test interactive feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_interactive_feedback(): void {
 
         // Create a multianswerrgx question.
@@ -328,6 +358,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', true));
     }
 
+    /**
+     * Test interactive feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_interactive_partial_response_does_not_reveal_answer(): void {
 
         // Create a multianswerrgx question.
@@ -386,6 +421,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->currentoutput);
     }
 
+    /**
+     * Test interactive feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_interactivecountback_feedback(): void {
 
         // Create a multianswerrgx question.
@@ -478,6 +518,11 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub4_answer', $choices, '1', false));
     }
 
+    /**
+     * Test interactive feedback.
+     *
+     * @covers ::not_entirely_sure()
+     */
     public function test_deferred_feedback_multiple(): void {
 
         // Create a multianswerrgx question.

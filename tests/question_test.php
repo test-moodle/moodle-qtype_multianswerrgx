@@ -241,22 +241,6 @@ final class question_test extends \advanced_testcase {
     }
 
     /**
-     * test_get_question_definition_for_external_rendering
-     */
-    /*
-    public function test_get_question_definition_for_external_rendering(): void {
-        $this->resetAfterTest();
-
-        $question = \test_question_maker::make_question('multianswerrgx');
-        $question->start_attempt(new question_attempt_step(), 1);
-        $qa = \test_question_maker::get_a_qa($question);
-        $displayoptions = new question_display_options();
-
-        $options = $question->get_question_definition_for_external_rendering($qa, $displayoptions);
-        $this->assertNull($options);
-    }
-    */
-    /**
      * Helper method to make a simulated second version of the standard multianswerrgx test question.
      *
      * The key think is that all the answer ids are changed (increased by 20).

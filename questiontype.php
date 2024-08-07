@@ -228,6 +228,10 @@ class qtype_multianswerrgx extends question_type {
             ];
         }
         foreach ($wrappedquestions as $wrapped) {
+            if (!isset($question->categoryobject)) {
+                $question->categoryobject = new stdClass();
+                $question->categoryobject->id = 0;
+            }
             question_bank::get_qtype($wrapped->qtype)->get_question_options($wrapped);
             // For wrapped questions the maxgrade is always equal to the defaultmark,
             // there is no entry in the question_instances table for them.

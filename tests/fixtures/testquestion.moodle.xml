@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Default for C1</text>
+
+    </category>
+  </question>
+
+<!-- question: 10  -->
+  <question type="multianswerrgx">
+    <name>
+      <text>Cloze with RX complete</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>This question consists of some text with an answer embedded right here {#1}. Then you will deal with this short answer {#2} please. The French flag is: {#3}.</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <defaultgrade>3</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+<questiontextrgx format="html"><text><![CDATA[<p>This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer}. Then you will deal with this short answer {1:SAC:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} please. The French flag is: {1:RX:%100%blue, white and red#You've got all 3 colours correct.~--blue#missing blue!}.</p>]]></text></questiontextrgx>  </question>
+
+</quiz>
