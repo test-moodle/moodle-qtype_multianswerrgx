@@ -46,13 +46,6 @@ jobs:
         with:
           path: plugin
 
-     - name: Set up Node.js
-          uses: actions/setup-node@v2
-          with:
-            node-version: '14'
-
-        - name: Install dependencies
-          run: npm install
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
