@@ -1,9 +1,10 @@
 name: Moodle Plugin CI
+
 on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
@@ -14,6 +15,7 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+
       mariadb:
         image: mariadb:10
         env:
@@ -21,7 +23,6 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
           MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
           MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
-
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
@@ -30,15 +31,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - php: '8.2'
-          #   moodle-branch: 'main'
-          #   database: 'mariadb'
-          - php: '8.3'
+          - php: '8.2'
+            moodle-branch: 'main'
+            database: 'mariadb'
+          - php: '8.2'
             moodle-branch: 'main'
             database: 'pgsql'
-          - php: '8.2'
+          - php: '8.1'
             moodle-branch: 'MOODLE_404_STABLE'
-            database: 'pgsql'
+            database: 'mariadb'
 
     steps:
       - name: Check out repository code
@@ -67,7 +68,7 @@ jobs:
       - name: Install moodle-plugin-ci
         run: |
           moodle-plugin-ci add-plugin --branch master iarenaza/moodle-filter_multilang2
-          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 -vvv
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
