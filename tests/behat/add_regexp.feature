@@ -49,11 +49,11 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
     And I press "saverestart"
-    
+
     And I set the field with xpath "//input[contains(@id, '1_sub1_answer')]" to "blue, white and red"
     And I set the field with xpath "//input[contains(@id, '1_sub2_answer')]" to "Black, red and gold"
     And I press "Check"
-    
+
     # see https://stackoverflow.com/questions/5818681/xpath-how-to-select-node-with-some-attribute-by-index
     # Click on feedbacktrigger for blank #1
     And I click on "(//a[contains(@class, 'feedbacktrigger')])[1]" "xpath_element"
@@ -93,12 +93,12 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
     And I press "saverestart"
-    
-    And I set the field with xpath "//input[contains(@id, '1_sub1_answer')]" to "blue, white and red"    
+
+    And I set the field with xpath "//input[contains(@id, '1_sub1_answer')]" to "blue, white and red"
     And I press "Check"
-    
+
     # Click on feedbacktrigger for blank #1
-    And I click on "(//a[contains(@class, 'feedbacktrigger')])" "xpath_element"    
+    And I click on "(//a[contains(@class, 'feedbacktrigger')])" "xpath_element"
     Then I should see "Congratulations!"
 
     And I press "Start again"
@@ -112,7 +112,7 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I press "Check"
     And I click on "(//a[contains(@class, 'feedbacktrigger')])" "xpath_element"
     Then I should see "One of the 12 accepted answers"
-  
+
   @javascript
   Scenario: Create a Cloze question with REGEXP sub-question with match case
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
@@ -133,11 +133,11 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I set the following fields to these values:
       | behaviour | immediatefeedback |
     And I press "saverestart"
-    
+
     And I set the field with xpath "//input[contains(@id, '1_sub1_answer')]" to "it's blue, white and red."
     And I press "Check"
     # Click on feedbacktrigger for blank #1
-    And I click on "(//a[contains(@class, 'feedbacktrigger')])" "xpath_element"    
+    And I click on "(//a[contains(@class, 'feedbacktrigger')])" "xpath_element"
     Then I should see "Please begin with a capital letter."
 
     And I press "Start again"
