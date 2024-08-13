@@ -176,6 +176,7 @@ class qtype_multianswerrgx_question extends question_graded_automatically_with_c
                     break;
                 case 'numerical':
                 case 'shortanswer':
+                case 'regexp':
                     $answerbit = '_____';
                     break;
                 default:

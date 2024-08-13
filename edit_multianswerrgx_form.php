@@ -159,7 +159,7 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         }
 
         $mform->addElement('submit', 'analyzequestion',
-                get_string('decodeverifyquestiontext', 'qtype_multianswerrgx'));
+                get_string('decodeverifyquestiontext', 'qtype_multianswer'));
         $mform->registerNoSubmitButton('analyzequestion');
         if ($this->reload) {
             for ($sub = 1; $sub <= $countsubquestions; $sub++) {
