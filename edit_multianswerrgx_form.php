@@ -306,6 +306,9 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
                             case 'shortanswer':
                                 $parsableanswerdef .= 'SHORTANSWER:';
                                 break;
+                            case 'regexp':
+                                $parsableanswerdef .= 'REGEXP:';
+                                break;
                             case 'numerical':
                                 $parsableanswerdef .= 'NUMERICAL:';
                                 break;

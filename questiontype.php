@@ -231,7 +231,7 @@ class qtype_multianswerrgx extends question_type {
             question_bank::get_qtype($wrapped->qtype)->get_question_options($wrapped);
             // For wrapped questions the maxgrade is always equal to the defaultmark,
             // there is no entry in the question_instances table for them.
-            $wrapped->category = $question->categoryobject->id ?? $question->category ?? 0;            
+            $wrapped->category = $question->categoryobject->id ?? $question->category ?? 0;
             $question->options->questions[$sequence[$wrapped->id]] = $wrapped;
         }
 
@@ -326,7 +326,7 @@ class qtype_multianswerrgx extends question_type {
                                         ['questionid' => $oldwrappedquestion->id]);
                                     break;
                                 case 'regexp':
-                                    $DB->delete_records('qtype_regexp_options',
+                                    $DB->delete_records('qtype_regexp',
                                         ['questionid' => $oldwrappedquestion->id]);
                                     break;
                                 case 'numerical':
