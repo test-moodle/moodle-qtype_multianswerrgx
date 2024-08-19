@@ -1,4 +1,4 @@
-@qtype @qtype_multianswerrgx
+@qtype @qtype_multianswerrgx @editor_tiny
 Feature: Test duplicating a quiz containing multianswerrgx question
   As a teacher
   In order to re-use my courses containing multianswerrgx questions
@@ -17,9 +17,6 @@ Feature: Test duplicating a quiz containing multianswerrgx question
     And the following "activities" exist:
       | activity   | name      | course | idnumber |
       | quiz       | Test quiz | C1     | quiz1    |
-    # Does not work with the following 2 lines!
-    # And quiz "Test quiz" contains the following questions:
-    #  | multianswerrgx-001 | 1 |
     And the following config values are set as admin:
       | enableasyncbackup | 0 |
 
@@ -33,7 +30,10 @@ Feature: Test duplicating a quiz containing multianswerrgx question
       | Schema | Course short name | C2       |
     And I am on the "Course 2" "core_question > course question bank" page
     And I choose "Edit question" action for "multianswerrgx-001" in the question bank
+    And I wait "3" seconds
     Then the following fields match these values:
       | Question name                      | multianswerrgx-001                   |
-      | Question text                      | Complete this opening line of verse: "The {1:SHORTANSWER:Dog#Wrong, silly!~=Owl#Well done!~*#Wrong answer} and the {1:MULTICHOICE:Bow-wow#You seem to have a dog obsessions!~Wiggly worm#Now you are just being ridiculous!~=Pussy-cat#Well done!} went to sea". |
       | General feedback                   | <p>General feedback: It's from "The Owl and the Pussy-cat" by Lear: "The owl and the pussycat went to sea"</p>  |
+    # @editor_tiny tag is needed for this to work; this avoids problems with the contents of Question text colliding with tiny_clozergx plugin.
+    And I click on the "View > Source code" menu item for the "Question text" TinyMCE editor
+    Then I should see "<p>Complete this opening line of verse: \"The {1:SHORTANSWER:Dog#Wrong,\n  silly!~=Owl#Well done!~*#Wrong answer} and the {1:MULTICHOICE:Bow-wow#You seem\n  to have a dog obsessions!~Wiggly worm#Now you are just being\n  ridiculous!~=Pussy-cat#Well done!} went to sea\".</p>" source code for the "Question text" TinyMCE editor
