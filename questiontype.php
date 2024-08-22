@@ -866,8 +866,11 @@ function qtype_multianswerrgx_extract_question($text) {
 /**
  * Validate a multianswerrgx question.
  *
- * @param object $question  The multianswerrgx question to validate as returned by qtype_multianswerrgx_extract_question
- * @return array Array of error messages with questions field names as keys.
+ * @param stdClass $question The multianswerrgx question to validate, as returned by qtype_multianswerrgx_extract_question.
+ *                           This object should include options and subquestions with answers and fractions.
+ *
+ * @return array An associative array of error messages, where keys correspond to specific question field names,
+ *               and values are the error messages related to those fields. If no errors are found, an empty array is returned.
  */
 function qtype_multianswerrgx_validate_question(stdClass $question): array {
     $errors = [];
@@ -926,9 +929,9 @@ function qtype_multianswerrgx_validate_question(stdClass $question): array {
 }
 /**
  * Check the regexp sub-question answers are valid. Adapted from regexp/locallib.php
- * @param text $answer
- * @param number $key
- * @return error text
+ @param string $answer The sub-question answer to be validated. It is expected to be a regular expression.
+ *
+ * @return string The error text describing any validation issues found. If no errors are found, an empty string is returned.
  */
 function validate_regexp_subquestion($answer) {
     $trimmedanswer = trim($answer);

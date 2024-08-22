@@ -50,6 +50,10 @@ class moodle1_qtype_multianswerrgx_handler extends moodle1_qtype_handler {
      * assumption then the parent of the embedded questions could be fixed on conversion in theory
      * (by using a temporary stash that keeps multianswerrgx's id and its sequence) but the category
      * fix would be tricky in XML.
+     * @param array $data An associative array containing question data. It should include 'answers' and 'multianswerrgxs' keys.
+     * @param array $raw  An associative array containing the raw, unprocessed data. This is currently unused in the method.
+     *
+     * @return void
      */
     public function process_question(array $data, array $raw) {
 

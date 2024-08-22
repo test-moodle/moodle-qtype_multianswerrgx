@@ -62,6 +62,9 @@ class restore_qtype_multianswerrgx_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/multianswerrgx element
+     * @param array $data An associative array containing the data for the `multianswerrgx` element.
+     *                    It is converted to an object before processing.     *
+     * @return void
      */
     public function process_multianswerrgx($data) {
         global $DB;
@@ -81,7 +84,7 @@ class restore_qtype_multianswerrgx_plugin extends restore_qtype_plugin {
             $data->question = $newquestionid;
             // Note: multianswerrgx->sequence is a list of question->id values. We aren't
             // recoding them here (because some questions can be missing yet). Instead
-            // we'll perform the recode in the {@link after_execute} method of the plugin
+            // we'll perform the recode in the {@see after_execute} method of the plugin
             // that gets executed once all questions have been created.
             // Insert record.
             $newitemid = $DB->insert_record('question_multianswerrgx', $data);
@@ -92,7 +95,7 @@ class restore_qtype_multianswerrgx_plugin extends restore_qtype_plugin {
 
     /**
      * This method is executed once the whole restore_structure_step
-     * this step is part of ({@link restore_create_categories_and_questions})
+     * this step is part of ({@see restore_create_categories_and_questions})
      * has ended processing the whole xml structure. Its name is:
      * "after_execute_" + connectionpoint ("question")
      *
@@ -191,6 +194,11 @@ class restore_qtype_multianswerrgx_plugin extends restore_qtype_plugin {
      * containing sequence (pointing to questions sequence in question_multianswerrgx)
      * and mixed answers. We'll delegate
      * the recoding of answers to the proper qtype
+     * @param stdClass $state An object representing the state of the question, including the original answer and
+     *                        the question ID.
+     *
+     * @return string A string representing the recoded answer, formatted as a sequence of `sequenceid-newanswer` pairs
+     *                separated by commas.
      */
     public function recode_legacy_state_answer($state) {
         global $DB;

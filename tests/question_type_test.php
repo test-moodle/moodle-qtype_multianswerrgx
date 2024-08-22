@@ -44,10 +44,12 @@ final class question_type_test extends \advanced_testcase {
     protected $qtype;
 
     protected function setUp(): void {
-        $this->qtype = new qtype_multianswerrgx();
+        parent::setUp();
+        $this->qtype = question_bank::get_qtype('multianswerrgx');
     }
 
     protected function tearDown(): void {
+        parent::tearDown();
         $this->qtype = null;
     }
 
