@@ -38,3 +38,8 @@ body.ie9 .que.multianswerrgx .feedbackspan {
     margin-bottom: 0;
     width: 100%;
 }
+
+.alternateanswers {
+    margin: -1rem;
+    color: green;
+}

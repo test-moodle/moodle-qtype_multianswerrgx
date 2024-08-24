@@ -204,32 +204,51 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
                             get_string('casesensitive', 'qtype_shortanswer'));
                 }
 
+                if ($this->questiondisplay->options->questions[$sub]->qtype == 'regexp') {
+                    $alternateq = $this->get_alternateanswers($this->questiondisplay->options->questions[$sub]);
+                }
+
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'multichoice') {
                     $mform->addElement('static', 'sub_'.$sub.'_layout',
                             get_string('layout', 'qtype_multianswerrgx'));
                     $mform->addElement('static', 'sub_'.$sub.'_shuffleanswers',
                             get_string('shuffleanswers', 'qtype_multichoice'));
                 }
+                $mform->addElement('html', '<hr />');
+                $answer = $this->questiondisplay->options->questions[$sub];
+                foreach ($answer->answer as $key => $ans) {
 
-                foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
                     if ($this->questiondisplay->options->questions[$sub]->qtype == 'regexp') {
+                        $alternateqa = $alternateq[($key + 1)];
                         $ans = has_permutations($ans);
-                        $mform->addElement('static', 'alert1', get_string('answer', 'question'), $ans);
+                        $mform->addElement('static', '', get_string('answer', 'question').'&nbsp;'.($key + 1).
+                            '&nbsp;('.($answer->fraction[$key] * 100).'%)', $ans);
+                        if ($key !== 0 && $answer->fraction[$key] !== '0') {
+                            $mform->addElement('html', '<div class="alternateanswers">');
+                                $list = '';
+                            foreach ($alternateqa['answers'] as $alternate) {
+                                $list .= '<li>'.$alternate.'</li>';
+                            }
+                                $mform->addElement('static', 'alternateanswer', '', '<ul class="square">'.$list.'</ul>');
+
+                            $mform->addElement('html', '</div>');
+                        }
                     } else {
-                    $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']',
+                        $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']',
                             get_string('answer', 'question'));
-                    }
-                    if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
+
+                        if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
                             $key == 0) {
-                        $mform->addElement('static', 'sub_'.$sub.'_tolerance['.$key.']',
+                            $mform->addElement('static', 'sub_'.$sub.'_tolerance['.$key.']',
                                 get_string('acceptederror', 'qtype_numerical'));
-                    }
+                        }
 
-                    $mform->addElement('static', 'sub_'.$sub.'_fraction['.$key.']',
+                        $mform->addElement('static', 'sub_'.$sub.'_fraction['.$key.']',
                             get_string('gradenoun'));
-
+                    }
                     $mform->addElement('static', 'sub_'.$sub.'_feedback['.$key.']',
                             get_string('feedback', 'question'));
+                    $mform->addElement('html', '<hr />');
                 }
             }
 
@@ -543,5 +562,48 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
      */
     public function qtype() {
         return 'multianswerrgx';
+    }
+
+    /**
+     * Generates alternate answers with corresponding fractions.
+     *
+     * @param object $answers Contains answer data with:
+     *                        - answer: An array of answers.
+     *                        - fraction: An array of fractions for each answer.
+     *
+     * @return array An array of alternate answers with:
+     *               - 'fraction': The fraction as a percentage.
+     *               - 'regexp': The associated regular expression.
+     *               - 'answers': An array of possible answers.
+     */
+    public function get_alternateanswers($answers) {
+        $alternateanswers = [];
+        $i = 1;
+        foreach ($answers->answer as $index => $answer) {
+            if ($answers->fraction[$index] !== 0) {
+                // This is Answer 1 :: do not process as regular expression.
+                if ($i == 1) {
+                    $alternateanswers[$i]['fraction'] = (($answers->fraction[$index]) * 100).'%';
+                    $alternateanswers[$i]['regexp'] = $answer;
+                    $alternateanswers[$i]['answers'][] = $answer;
+                } else {
+                    // JR added permutations OCT 2012.
+                    $answer = has_permutations($answer);
+                    // End permutations.
+                    $r = expand_regexp($answer);
+                    if ($r) {
+                        $alternateanswers[$i]['fraction'] = (($answers->fraction[$index]) * 100).'%';
+                        $alternateanswers[$i]['regexp'] = $answer;
+                        if (is_array($r)) {
+                            $alternateanswers[$i]['answers'] = $r; // Normal alternateanswers (expanded).
+                        } else {
+                            $alternateanswers[$i]['answers'][] = $r; // Regexp was not expanded.
+                        }
+                    }
+                }
+            }
+            $i++;
+        }
+        return $alternateanswers;
     }
 }
