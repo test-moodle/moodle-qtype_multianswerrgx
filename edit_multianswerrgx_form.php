@@ -212,9 +212,13 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
                 }
 
                 foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
+                    if ($this->questiondisplay->options->questions[$sub]->qtype == 'regexp') {
+                        $ans = has_permutations($ans);
+                        $mform->addElement('static', 'alert1', get_string('answer', 'question'), $ans);
+                    } else {
                     $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']',
                             get_string('answer', 'question'));
-
+                    }
                     if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
                             $key == 0) {
                         $mform->addElement('static', 'sub_'.$sub.'_tolerance['.$key.']',
