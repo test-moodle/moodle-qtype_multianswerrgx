@@ -214,41 +214,48 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
                     $mform->addElement('static', 'sub_'.$sub.'_shuffleanswers',
                             get_string('shuffleanswers', 'qtype_multichoice'));
                 }
-                $mform->addElement('html', '<hr />');
                 $answer = $this->questiondisplay->options->questions[$sub];
                 foreach ($answer->answer as $key => $ans) {
-
+                    $mform->addElement('html', '<hr />');
                     if ($this->questiondisplay->options->questions[$sub]->qtype == 'regexp') {
                         $alternateqa = $alternateq[($key + 1)];
+                        $ans0 = $ans;
                         $ans = has_permutations($ans);
-                        $mform->addElement('static', '', get_string('answer', 'question').'&nbsp;'.($key + 1).
-                            '&nbsp;('.($answer->fraction[$key] * 100).'%)', $ans);
+                        $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']', get_string('answer', 'question').' '
+                            .($key + 1).' ('.($answer->fraction[$key] * 100).'%)', $ans);
                         if ($key !== 0 && $answer->fraction[$key] !== '0') {
-                            $mform->addElement('html', '<div class="alternateanswers">');
-                                $list = '';
-                            foreach ($alternateqa['answers'] as $alternate) {
-                                $list .= '<li>'.$alternate.'</li>';
+                            if ($ans !== $ans0) {
+                                $mform->addElement('html', '<div class="developedanswersrgx">');
+                                $mform->addElement('static', '', get_string('developedanswer', 'qtype_multianswerrgx')
+                                    .' ', $alternateqa['regexp']);
+                                $mform->addElement('html', '</div>');
                             }
-                                $mform->addElement('static', 'alternateanswer', '', '<ul class="square">'.$list.'</ul>');
-
-                            $mform->addElement('html', '</div>');
+                            if (count($alternateqa['answers']) > 1) {
+                                $mform->addElement('static', '', get_string('alternativecorrectanswers', 'qtype_multianswerrgx'));
+                                $list = '';
+                                $mform->addElement('html', '<div class="alternateanswersrgx">');
+                                foreach ($alternateqa['answers'] as $alternate) {
+                                    $list .= '<li>'.$alternate.'</li>';
+                                }
+                                $mform->addElement('static', 'alternateanswersrgx', '', '<ul>'.$list.'</ul>');
+                                $mform->addElement('html', '</div>');
+                            }
                         }
                     } else {
                         $mform->addElement('static', 'sub_'.$sub.'_answer['.$key.']',
                             get_string('answer', 'question'));
 
                         if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
-                            $key == 0) {
+                                $key == 0) {
                             $mform->addElement('static', 'sub_'.$sub.'_tolerance['.$key.']',
-                                get_string('acceptederror', 'qtype_numerical'));
+                                    get_string('acceptederror', 'qtype_numerical'));
                         }
 
                         $mform->addElement('static', 'sub_'.$sub.'_fraction['.$key.']',
-                            get_string('gradenoun'));
+                                get_string('gradenoun'));
                     }
                     $mform->addElement('static', 'sub_'.$sub.'_feedback['.$key.']',
                             get_string('feedback', 'question'));
-                    $mform->addElement('html', '<hr />');
                 }
             }
 

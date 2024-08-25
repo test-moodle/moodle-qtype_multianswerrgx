@@ -39,7 +39,18 @@ body.ie9 .que.multianswerrgx .feedbackspan {
     width: 100%;
 }
 
-.alternateanswers {
-    margin: -1rem;
+.alternateanswersrgx {
+    margin-top: -2rem;
     color: green;
+}
+
+.alternateanswersrgx ul li {
+    list-style-type: square;
+    margin-left: -1.5rem;
+}
+
+.developedanswersrgx {
+    margin-top: -1rem;
+    margin-bottom: 0;
+    color: blue;
 }

@@ -23,12 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['alternativecorrectanswers'] = 'Alternative correct answers';
 $string['confirmquestionsaveasedited'] = 'I confirm that I want the question to be saved as edited';
 $string['confirmsave'] = 'Confirm then save {$a}';
 $string['correctanswer'] = 'Correct answer';
 $string['correctanswerandfeedback'] = 'Correct answer and feedback';
 $string['corruptedquestion'] = 'This question is corrupted and contains subquestions that are not present in your system.';
 $string['decodeverifyquestiontext'] = 'Decode and verify the question text';
+$string['developedanswer'] = 'Developed answer';
 $string['invalidmultianswerrgxquestion'] = 'Invalid embedded answers (Clozergx) question ({$a}).';
 $string['layout'] = 'Layout';
 $string['layouthorizontal'] = 'Horizontal row of radio-buttons';
