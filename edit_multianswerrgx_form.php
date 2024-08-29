@@ -479,6 +479,7 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
                                     $maxgrade = true;
                                 }
                                 if ($subquestion->qtype == 'regexp') {
+                                    $errortext = '';
                                     if ($answercount === 1 && $subquestion->fraction[$key] < 1) {
                                         $errortext = get_string("filloutoneanswer", "qtype_regexp");
                                     }
