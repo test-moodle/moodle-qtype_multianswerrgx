@@ -102,6 +102,8 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
      * @return void
      */
     protected function definition_inner($mform) {
+        $mform = $this->form_setup($mform);
+
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('reload', PARAM_INT);
 
@@ -157,7 +159,12 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         } else {
             $countsubquestions = $countsavedsubquestions;
         }
-
+        $mform->addElement('header', 'addgapsheader', 'coucou');
+        //$mform->addHelpButton('addgapsheader', 'addgapsheader', 'qtype_gapfill');
+        $buttonarray[] = $mform->addElement('button', 'add_gaps_5', get_string('addclozegaps5', 'qtype_gapfill'));
+        $buttonarray[] = $mform->addElement('button', 'add_gaps_7', get_string('addclozegaps7', 'qtype_gapfill'));
+        $buttonarray[] = $mform->addElement('button', 'remove_gaps_button', get_string('removegaps', 'qtype_gapfill'));
+        $mform->addHelpButton('remove_gaps_button', 'removegaps', 'qtype_gapfill');
         $mform->addElement('submit', 'analyzequestion',
                 get_string('decodeverifyquestiontext', 'qtype_multianswer'));
         $mform->registerNoSubmitButton('analyzequestion');
@@ -307,7 +314,6 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
 
         $this->add_interactive_settings(true, true);
     }
-
     /**
      * Sets the data for the question.
      *
@@ -614,4 +620,33 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         }
         return $alternateanswers;
     }
+    
+    /**
+     * Setup form elements that are very unlikely to change
+     *
+     * @param MoodleQuickForm $mform
+     * @return MoodleQuickForm
+     */
+    protected function form_setup(MoodleQuickForm $mform) : MoodleQuickForm {
+        global $PAGE;
+        
+        $PAGE->requires->jquery();
+        $PAGE->requires->jquery_plugin('ui');
+        $PAGE->requires->jquery_plugin('ui-css');
+/*
+        $PAGE->requires->strings_for_js(array('itemsettingserror', 'editquestiontext', 'additemsettings',
+            'correct', 'incorrect', 'addgapserror', 'tooshortforgapserror'), 'qtype_multianswerrgx');
+            
+            */
+        $PAGE->requires->js_call_amd('qtype_multianswerrgx/questionedit', 'init');
+
+
+        $mform->addElement('hidden', 'reload', 1);
+        $mform->setType('reload', PARAM_RAW);
+
+//        $mform->removeelement('questiontext');
+
+        return $mform;
+    }
+
 }
