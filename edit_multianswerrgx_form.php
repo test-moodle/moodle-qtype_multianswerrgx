@@ -111,6 +111,16 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         $mform->removeElement('defaultmark');
         $this->confirm = optional_param('confirm', false, PARAM_BOOL);
 
+        $insertbefore = 'status'; // Moodle 4.x.
+        $buttonarray = array();
+        $buttonarray[] = $mform->createElement('button', 'add_gaps_5', get_string('addclozegaps5', 'qtype_multianswerrgx'));
+        $buttonarray[] = $mform->createElement('button', 'add_gaps_9', get_string('addclozegaps9', 'qtype_multianswerrgx'));
+        $buttonarray[] = $mform->createElement('button', 'remove_gaps_button', get_string('removegaps', 'qtype_multianswerrgx'));
+
+        // Insert the button group after the 'questiontext' field
+        $mform->insertElementBefore($mform->createElement('group', 'button_group', get_string('addgapslabel', 'qtype_multianswerrgx'), $buttonarray, ' '), $insertbefore);
+        $mform->addHelpButton('button_group', 'addgapslabel', 'qtype_multianswerrgx');
+        
         // Display the questions from questiontext.
         if ($questiontext = optional_param_array('questiontext', false, PARAM_RAW)) {
             $this->questiondisplay = fullclone(qtype_multianswerrgx_extract_question($questiontext));
@@ -159,14 +169,9 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         } else {
             $countsubquestions = $countsavedsubquestions;
         }
-        $mform->addElement('header', 'addgapsheader', 'coucou');
-        //$mform->addHelpButton('addgapsheader', 'addgapsheader', 'qtype_gapfill');
-        $buttonarray[] = $mform->addElement('button', 'add_gaps_5', get_string('addclozegaps5', 'qtype_gapfill'));
-        $buttonarray[] = $mform->addElement('button', 'add_gaps_7', get_string('addclozegaps7', 'qtype_gapfill'));
-        $buttonarray[] = $mform->addElement('button', 'remove_gaps_button', get_string('removegaps', 'qtype_gapfill'));
-        $mform->addHelpButton('remove_gaps_button', 'removegaps', 'qtype_gapfill');
         $mform->addElement('submit', 'analyzequestion',
                 get_string('decodeverifyquestiontext', 'qtype_multianswer'));
+
         $mform->registerNoSubmitButton('analyzequestion');
         if ($this->reload) {
             for ($sub = 1; $sub <= $countsubquestions; $sub++) {
@@ -188,7 +193,7 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
                                     $this->savedquestiondisplay->options->questions[$sub]->qtype)),
                             ['class' => 'error']);
                 }
-                            $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'question',
+                    $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'question',
                        '{#'.$sub.'}').'&nbsp;'.question_bank::get_qtype_name(
                             $this->questiondisplay->options->questions[$sub]->qtype).$storemess);
 
@@ -629,23 +634,11 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
      */
     protected function form_setup(MoodleQuickForm $mform) : MoodleQuickForm {
         global $PAGE;
-        
-        $PAGE->requires->jquery();
-        $PAGE->requires->jquery_plugin('ui');
-        $PAGE->requires->jquery_plugin('ui-css');
-/*
-        $PAGE->requires->strings_for_js(array('itemsettingserror', 'editquestiontext', 'additemsettings',
-            'correct', 'incorrect', 'addgapserror', 'tooshortforgapserror'), 'qtype_multianswerrgx');
-            
-            */
+        $PAGE->requires->strings_for_js(array('addgapserror', 'tooshortforgapserror'), 'qtype_multianswerrgx');
         $PAGE->requires->js_call_amd('qtype_multianswerrgx/questionedit', 'init');
-
-
-        $mform->addElement('hidden', 'reload', 1);
-        $mform->setType('reload', PARAM_RAW);
-
-//        $mform->removeelement('questiontext');
-
+        //$mform->addElement('hidden', 'reload', 1);
+        //$mform->setType('reload', PARAM_RAW);
+        //$mform->removeelement('questiontext');
         return $mform;
     }
 

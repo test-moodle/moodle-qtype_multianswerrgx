@@ -23,6 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addgapslabel'] = 'Add cloze gaps';
+$string['addgapslabel_help'] = 'Add cloze gaps automatically to the question text, either every 5 words or every 7 words. Uses the SHORTANSWER question type only. Note.- The "Remove all gaps" button will remove all existing sub-questions from the question text and re-enable the "Add gaps" buttons';
+$string['addclozegaps5'] = 'Add gaps 1/5';
+$string['addclozegaps9'] = 'Add gaps 1/9';
+$string['addgapserror'] = 'This question text already has gaps';
 $string['alternativecorrectanswers'] = 'Alternative correct answers';
 $string['confirmquestionsaveasedited'] = 'I confirm that I want the question to be saved as edited';
 $string['confirmsave'] = 'Confirm then save {$a}';
@@ -71,8 +76,10 @@ $string['questiontypechanged'] = 'Question type changed';
 $string['questiontypechangedcomment'] = 'At least one question type has been changed.<br />Did you add, delete or move a question?<br />Look ahead.';
 $string['questionusedinquiz'] = 'This question is used in {$a->nb_of_quiz} quiz(s), total attempt(s) : {$a->nb_of_attempts} ';
 $string['regradeissuenumsubquestionschanged'] = 'The number of embedded sub-questions in the question has changed.';
+$string['removegaps'] = 'Remove all gaps';
 $string['storedqtype'] = 'Stored question type {$a}';
 $string['subqresponse'] = 'part {$a->i}: {$a->response}';
+$string['tooshortforgapserror'] = 'Not enough text to create gaps!';
 $string['unknownquestiontypeofsubquestion'] = 'Unknown question type: {$a->type} of question part # {$a->sub}';
 $string['warningquestionmodified'] = '<b>WARNING</b>';
 $string['youshouldnot'] = '<b>YOU SHOULD NOT</b>';

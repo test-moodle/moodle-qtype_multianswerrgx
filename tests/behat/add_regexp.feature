@@ -1,4 +1,4 @@
-@qtype @qtype_multianswerrgx
+@qtype @qtype_multianswerrgx @javascript
 Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question and Preview it
   As a teacher
   In order to test my students
@@ -15,7 +15,6 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
       | user    | course | role           |
       | teacher | C1     | editingteacher |
 
-  @javascript
   Scenario: Create a Cloze question with basic REGEXP sub-question with errors
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I press "Create a new question ..."
@@ -32,7 +31,6 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I press "id_submitbutton"
     Then I should see "multianswer-00" in the "categoryquestions" "table"
 
-  @javascript
   Scenario: Create a Cloze question with basic REGEXP sub-question and Preview it
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I add a "Embedded answers with REGEXP (Clozergx)" question filling the form with:
@@ -71,7 +69,6 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I click on "(//a[contains(@class, 'feedbacktrigger')])[2]" "xpath_element"
     Then I should see "Start with a capital letter"
 
-  @javascript
   Scenario: Create a Cloze question with REGEXP sub-question with permutations and Preview it
     # Note: it's not possible to generate permutations in the multianswer question; we use a full-blown regular expression.
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
@@ -118,7 +115,6 @@ Feature: Test creating a Multianswer (Cloze) question with REGEXP sub-question a
     And I click on "(//a[contains(@class, 'feedbacktrigger')])" "xpath_element"
     Then I should see "One of the 12 accepted answers"
 
-  @javascript
   Scenario: Create a Cloze question with REGEXP sub-question with match case
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I press "Create a new question ..."
