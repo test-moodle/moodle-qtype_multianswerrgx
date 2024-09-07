@@ -636,9 +636,11 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         global $PAGE;
         $PAGE->requires->strings_for_js(array('addgapserror', 'tooshortforgapserror'), 'qtype_multianswerrgx');
         $PAGE->requires->js_call_amd('qtype_multianswerrgx/questionedit', 'init');
-        //$mform->addElement('hidden', 'reload', 1);
-        //$mform->setType('reload', PARAM_RAW);
-        //$mform->removeelement('questiontext');
+        $mform->addElement('hidden', 'reload', 1);
+        $mform->setType('reload', PARAM_RAW);
+        if (isset($question->id) && $question->id && $question->qtype && $question->questiontext) {
+          $mform->removeelement('questiontext');
+        }
         return $mform;
     }
 
