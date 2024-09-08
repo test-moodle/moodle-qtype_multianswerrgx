@@ -109,19 +109,21 @@ define(['jquery'], function($) {
               // Separate the word from any trailing punctuation
               let word = words[index];
               let punctuation = '';
-              // Check if the word ends with punctuation
               if (/[.,!?;:]+$/.test(word)) {
                   punctuation = word.slice(-1); // Get the punctuation mark
                   word = word.slice(0, -1); // Remove the punctuation from the word
               }
-              // Check if the word starts with capital letter and skip it. TODO.
-              // Enclose the word in square brackets, then add back the punctuation
+              // Check if the word starts with a capital letter
+              if (word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])) {
+                // If the word starts with a capital letter, skip the gapping transformation
+                continue;
+              }
+              // Enclose the word in SHORTANSWER (SA) brackets, then add back the punctuation
               words[index] = `{1:SA:=${word}}${punctuation}`;
             }
           }
           // Join the words back into a single string
           let gappedText = words.join(' ');
-          //$('#id_add_gaps_5, #id_add_gaps_7').prop('disabled', true);
           if (gappedText !== '') {
             $(paragraphs[i]).text(gappedText);
           }
