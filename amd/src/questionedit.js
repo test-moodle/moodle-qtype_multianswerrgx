@@ -55,9 +55,10 @@ define(['jquery'], function($) {
         // Regular expression to detect the presence of sub-questions in question text.
         var regex = /\{[^}]*[^}]*\}/g;
         var containsGaps = regex.test(textContent);
+        let paraText;
         if (containsGaps) {
           for (let i = 0; i < paragraphs.length; i++) {
-            let paraText = $(paragraphs[i]).text();
+            paraText = $(paragraphs[i]).text();
             const cleanedText = paraText.replace(/\{[^:]+:[^:]+:=(.*?)(#.*?)?\}/g, '$1');
             $(paragraphs[i]).text(cleanedText);
           }
@@ -80,7 +81,7 @@ define(['jquery'], function($) {
         var iframe = $('#id_questiontext_ifr');
         var iframeBody = iframe.contents().find('body');
         var textContent = iframeBody.text();
-        console.log('textContent = ' + textContent);
+        //console.log('textContent = ' + textContent);
         var paragraphs = iframeBody.find('p');
         // Regular expression to detect the presence of sub-questions in question text.
         var pattern = /\{[^}]*[^}]*\}/g;
@@ -100,58 +101,33 @@ define(['jquery'], function($) {
           ));
           return '';
         }
-        let words;
-        let gappedText;
-        let paraText;
+        let wordsHtml;
         for (let i = 0; i < paragraphs.length; i++) {
-          paraText = $(paragraphs[i]).text();
           var paragraphHtml = $(paragraphs[i]).html();
-          console.log('paragraphHtml = ' + paragraphHtml);
-          words = paraText.split(' ');
-          console.log('words = ' + words);
-          let wordsHTML = paragraphHtml.split(' ');
-          console.log('wordsHTML = ' + wordsHTML);
-          let toto = convertToGappedText(paragraphHtml);
-          console.log('toto = ' + toto);
-
-          // Loop through the words and enclose every 5th or 9th word in SHORTANSWER marker.
-          for (let index = 0; index < words.length; index++) {
-            if ((index + 1) % interval === 0) {
-              // Separate the word from any trailing punctuation
-              let word = words[index];
-              let punctuation = '';
-              // Check if the word ends with punctuation
-              if (/[.,!?;:]+$/.test(word)) {
-                  punctuation = word.slice(-1); // Get the punctuation mark
-                  word = word.slice(0, -1); // Remove the punctuation from the word
-              }
-              // Enclose the word in square brackets, then add back the punctuation
-              words[index] = `{1:SA:=${word}}${punctuation}`;
-            }
-          }
-          // Join the words back into a single string
-          gappedText = words.join(' ');
-          //$('#id_add_gaps_5, #id_add_gaps_7').prop('disabled', true);
-          if (gappedText !== '') {
-            $(paragraphs[i]).text(gappedText);
+          wordsHtml = convertToGappedText(paragraphHtml, interval);
+          let wordsHtmlArray = wordsHtml.split(',');
+          // Join the array elements with spaces
+          let gappedTextHTLM = wordsHtmlArray.join(' ');
+          if (gappedTextHTLM !== '') {
+            $(paragraphs[i]).html(gappedTextHTLM);
           }
           $('#id_button_group_remove_gaps_button').prop('disabled', false);
         }
       }
       /**
-       * Converts a comma-separated list of words into a gapped text by replacing every third word with '[...]',
-       * while preserving HTML tags.
+       * Converts a comma-separated list of words into a gapped text, while preserving HTML tags.
        *
        * @param {string} text - The comma-separated string containing words and possible HTML tags.
+       * @param {number} interval - The interval at which to enclose words in brackets.
        * @returns {string} - The transformed string with every third word replaced by '[...]'.
        */
-      function convertToGappedText(text) {
+      function convertToGappedText(text, interval) {
         let words = text.split(' '); // Split the text by commas
         let transformedText = words.map((word, index) => {
           let trimmedWord = word.trim();
-          // Every 3rd word and not part of an HTML tag
-          if ((index + 1) % 3 === 0 && !trimmedWord.startsWith('<') && !trimmedWord.endsWith('>')) {
-            return `[...]`; // Replace the word with [...]
+          // Every interval word and not part of an HTML tag
+          if ((index + 1) % interval === 0 && !trimmedWord.startsWith('<') && !trimmedWord.endsWith('>')) {
+            return '{1:SA:=' + trimmedWord + '}'; // Replace the word with [...]
           }
           return word; // Return the original word if it's not to be replaced
         }).join(',');
