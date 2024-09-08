@@ -81,10 +81,6 @@ define(['jquery'], function($) {
         var iframe = $('#id_questiontext_ifr');
         var iframeBody = iframe.contents().find('body');
         var textContent = iframeBody.text();
-<<<<<<< HEAD
-=======
-        //console.log('textContent = ' + textContent);
->>>>>>> 339a84f1effb95f1fbf2090c11118f0cf11b3b0b
         var paragraphs = iframeBody.find('p');
         // Regular expression to detect the presence of sub-questions in question text.
         var pattern = /\{[^}]*[^}]*\}/g;
@@ -104,11 +100,9 @@ define(['jquery'], function($) {
           ));
           return '';
         }
-        let wordsHtml;
         for (let i = 0; i < paragraphs.length; i++) {
-<<<<<<< HEAD
-          paraText = $(paragraphs[i]).text();
-          words = paraText.split(' ');
+          let paraText = $(paragraphs[i]).text();
+          let words = paraText.split(' ');
           // Loop through the words and enclose every 5th or 9th word in SHORTANSWER marker.
           for (let index = 0; index < words.length; index++) {
             if ((index + 1) % interval === 0) {
@@ -126,45 +120,14 @@ define(['jquery'], function($) {
             }
           }
           // Join the words back into a single string
-          gappedText = words.join(' ');
+          let gappedText = words.join(' ');
           //$('#id_add_gaps_5, #id_add_gaps_7').prop('disabled', true);
           if (gappedText !== '') {
             $(paragraphs[i]).text(gappedText);
-=======
-          var paragraphHtml = $(paragraphs[i]).html();
-          wordsHtml = convertToGappedText(paragraphHtml, interval);
-          let wordsHtmlArray = wordsHtml.split(',');
-          // Join the array elements with spaces
-          let gappedTextHTLM = wordsHtmlArray.join(' ');
-          if (gappedTextHTLM !== '') {
-            $(paragraphs[i]).html(gappedTextHTLM);
->>>>>>> 339a84f1effb95f1fbf2090c11118f0cf11b3b0b
           }
           $('#id_button_group_remove_gaps_button').prop('disabled', false);
         }
       }
-<<<<<<< HEAD
-=======
-      /**
-       * Converts a comma-separated list of words into a gapped text, while preserving HTML tags.
-       *
-       * @param {string} text - The comma-separated string containing words and possible HTML tags.
-       * @param {number} interval - The interval at which to enclose words in brackets.
-       * @returns {string} - The transformed string with every third word replaced by '[...]'.
-       */
-      function convertToGappedText(text, interval) {
-        let words = text.split(' '); // Split the text by commas
-        let transformedText = words.map((word, index) => {
-          let trimmedWord = word.trim();
-          // Every interval word and not part of an HTML tag
-          if ((index + 1) % interval === 0 && !trimmedWord.startsWith('<') && !trimmedWord.endsWith('>')) {
-            return '{1:SA:=' + trimmedWord + '}'; // Replace the word with [...]
-          }
-          return word; // Return the original word if it's not to be replaced
-        }).join(',');
-        return transformedText;
-      }
->>>>>>> 339a84f1effb95f1fbf2090c11118f0cf11b3b0b
     }
   };
 });
