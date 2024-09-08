@@ -60,7 +60,6 @@ $string['qtypenotrecognized'] = 'Question type {$a} not recognised';
 $string['questiondefinition'] = 'Question definition';
 $string['questiondeleted'] = 'Question deleted';
 $string['questioninquiz'] = '
-
 <ul>
   <li>add or delete questions, </li>
   <li>change the questions order in the text,</li>

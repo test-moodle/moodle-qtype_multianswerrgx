@@ -22,7 +22,7 @@
  */
 
 /* The data is stored in a hidden field */
-define(['jquery'], function($) {    
+define(['jquery'], function($) {
   return {
     init: function() {
 
@@ -37,12 +37,12 @@ define(['jquery'], function($) {
 
       /* A click on the Add gaps 1/5 button. */
       $('#id_button_group_add_gaps_5').on('click', function() {
-        createGaps (5);
+        createGaps(5);
       });
 
       /* A click on the Add gaps 1/9 button. */
       $('#id_button_group_add_gaps_9').on('click', function() {
-        createGaps (9);
+        createGaps(9);
       });
 
       /* A click on the Remove gaps button. */
@@ -73,7 +73,7 @@ define(['jquery'], function($) {
        * @param {number} interval - The interval at which to enclose words in brackets.
        * @returns {string} The modified text with every nth word enclosed in brackets.       *
        */
-      function createGaps (interval) {
+      function createGaps(interval) {
         // Init error divs.
         $('#id_error_button_group_add_gaps_5').html('');
         $('#id_error_button_group_add_gaps_9').html('');
