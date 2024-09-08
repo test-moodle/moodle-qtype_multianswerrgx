@@ -23,11 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addgapslabel'] = 'Add cloze gaps';
-$string['addgapslabel_help'] = 'Add cloze gaps automatically to the question text, either every 5 words or every 7 words. Uses the SHORTANSWER question type only. Note.- The "Remove all gaps" button will remove all existing sub-questions from the question text and re-enable the "Add gaps" buttons';
 $string['addclozegaps5'] = 'Add gaps 1/5';
 $string['addclozegaps9'] = 'Add gaps 1/9';
 $string['addgapserror'] = 'This question text already has gaps';
+$string['addgapslabel'] = 'Add cloze gaps';
+$string['addgapslabel_help'] = 'Add cloze gaps automatically to the question text, either every 5 words or every 7 words. Uses the SHORTANSWER question type only. Note.- The "Remove all gaps" button will remove all existing sub-questions from the question text and re-enable the "Add gaps" buttons';
 $string['alternativecorrectanswers'] = 'Alternative correct answers';
 $string['confirmquestionsaveasedited'] = 'I confirm that I want the question to be saved as edited';
 $string['confirmsave'] = 'Confirm then save {$a}';

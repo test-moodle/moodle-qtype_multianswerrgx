@@ -22,8 +22,7 @@
  */
 
 /* The data is stored in a hidden field */
-define(['jquery'], function($) {
-    /* eslint-disable no-console */
+define(['jquery'], function($) {    
   return {
     init: function() {
 

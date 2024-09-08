@@ -112,15 +112,16 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         $this->confirm = optional_param('confirm', false, PARAM_BOOL);
 
         $insertbefore = 'status'; // Moodle 4.x.
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('button', 'add_gaps_5', get_string('addclozegaps5', 'qtype_multianswerrgx'));
         $buttonarray[] = $mform->createElement('button', 'add_gaps_9', get_string('addclozegaps9', 'qtype_multianswerrgx'));
         $buttonarray[] = $mform->createElement('button', 'remove_gaps_button', get_string('removegaps', 'qtype_multianswerrgx'));
 
-        // Insert the button group after the 'questiontext' field
-        $mform->insertElementBefore($mform->createElement('group', 'button_group', get_string('addgapslabel', 'qtype_multianswerrgx'), $buttonarray, ' '), $insertbefore);
+        // Insert the button group after the 'questiontext' field.
+        $mform->insertElementBefore($mform->createElement('group', 'button_group',
+          get_string('addgapslabel', 'qtype_multianswerrgx'), $buttonarray, ' '), $insertbefore);
         $mform->addHelpButton('button_group', 'addgapslabel', 'qtype_multianswerrgx');
-        
+
         // Display the questions from questiontext.
         if ($questiontext = optional_param_array('questiontext', false, PARAM_RAW)) {
             $this->questiondisplay = fullclone(qtype_multianswerrgx_extract_question($questiontext));
@@ -625,21 +626,21 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         }
         return $alternateanswers;
     }
-    
+
     /**
      * Setup form elements that are very unlikely to change
      *
      * @param MoodleQuickForm $mform
      * @return MoodleQuickForm
      */
-    protected function form_setup(MoodleQuickForm $mform) : MoodleQuickForm {
+    protected function form_setup(MoodleQuickForm $mform): MoodleQuickForm {
         global $PAGE;
-        $PAGE->requires->strings_for_js(array('addgapserror', 'tooshortforgapserror'), 'qtype_multianswerrgx');
+        $PAGE->requires->strings_for_js(['addgapserror', 'tooshortforgapserror'], 'qtype_multianswerrgx');
         $PAGE->requires->js_call_amd('qtype_multianswerrgx/questionedit', 'init');
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('reload', PARAM_RAW);
         if (isset($question->id) && $question->id && $question->qtype && $question->questiontext) {
-          $mform->removeelement('questiontext');
+            $mform->removeelement('questiontext');
         }
         return $mform;
     }
