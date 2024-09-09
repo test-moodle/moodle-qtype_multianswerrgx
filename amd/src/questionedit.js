@@ -101,7 +101,7 @@ define(['jquery'], function($) {
         for (let i = 0; i < paragraphs.length; i++) {
           let paraText = $(paragraphs[i]).text();
           let words = paraText.split(' ');
-          // Thanks to Mark Johnson for this script.
+          // With thanks to Mark Johnson for this script.
           // Loop through the words and enclose every 5th or 9th word in SHORTANSWER marker.
            let offset = 1;
            for (let index = 0; index < words.length; index++) {
