@@ -25,7 +25,7 @@
 define(['jquery'], function($) {
   return {
     init: function() {
-
+    /* eslint-disable no-console */
       // Init the css for the error divs.
       let indexes = [5, 9];
       for (let i = 0; i < indexes.length; i++) {
@@ -97,17 +97,19 @@ define(['jquery'], function($) {
             'tooshortforgapserror',
             'qtype_multianswerrgx'
           ));
-          return '';
+          return;
         }
         for (let i = 0; i < paragraphs.length; i++) {
           let paraText = $(paragraphs[i]).text();
           let words = paraText.split(' ');
+          // Thanks to Mark Johnson for this script.
           // Loop through the words and enclose every 5th or 9th word in SHORTANSWER marker.
-          for (let index = 0; index < words.length; index++) {
-            if ((index + 1) % interval === 0) {
-              // Separate the word from any trailing punctuation
-              let word = words[index];
-              let punctuation = '';
+           let offset = 1;
+           for (let index = 0; index < words.length; index++) {
+             if ((index + offset) % interval === 0) {
+               // Separate the word from any trailing punctuation
+               let word = words[index];
+               let punctuation = '';
               if (/[.,!?;:]+$/.test(word)) {
                   punctuation = word.slice(-1); // Get the punctuation mark
                   word = word.slice(0, -1); // Remove the punctuation from the word
@@ -115,6 +117,7 @@ define(['jquery'], function($) {
               // Check if the word starts with a capital letter
               if (word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])) {
                 // If the word starts with a capital letter, skip the gapping transformation
+                offset -= 1;
                 continue;
               }
               // Enclose the word in SHORTANSWER (SA) brackets, then add back the punctuation
