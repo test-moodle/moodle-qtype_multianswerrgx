@@ -25,6 +25,7 @@
 define(['jquery'], function($) {
   return {
     init: function() {
+      /* eslint-disable no-console */
       // Init the css for the error divs.
       let indexes = [5, 9];
       for (let i = 0; i < indexes.length; i++) {
@@ -76,6 +77,7 @@ define(['jquery'], function($) {
         // Init error divs.
         $('#id_error_button_group_add_gaps_5').html('');
         $('#id_error_button_group_add_gaps_9').html('');
+        const capsWords = new Array();
         var iframe = $('#id_questiontext_ifr');
         var iframeBody = iframe.contents().find('body');
         var textContent = iframeBody.text();
@@ -116,8 +118,13 @@ define(['jquery'], function($) {
               // Check if the word starts with a capital letter
               if (word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])) {
                 // If the word starts with a capital letter, skip the gapping transformation
+                // Do not skip the gapping transformation if capitalised word has already been gapped.
+                if (!capsWords.includes(word)) {
                 offset -= 1;
+                // Add new capitalised word to the capsWords list.
+                capsWords.push(word);
                 continue;
+                }
               }
               // Enclose the word in SHORTANSWER (SA) brackets, then add back the punctuation
               words[index] = `{1:SA:=${word}}${punctuation}`;
