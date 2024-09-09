@@ -25,7 +25,6 @@
 define(['jquery'], function($) {
   return {
     init: function() {
-    /* eslint-disable no-console */
       // Init the css for the error divs.
       let indexes = [5, 9];
       for (let i = 0; i < indexes.length; i++) {
