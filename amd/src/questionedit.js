@@ -34,6 +34,8 @@ define(['jquery'], function($) {
           color: 'red',
         });
       }
+      // Check the state of the Checkbox to enable skipping capitalised words or not.
+      var skipcapswordscheck = $('#id_button_group_skip_caps_words');
 
       /* A click on the Add gaps 1/5 button. */
       $('#id_button_group_add_gaps_5').on('click', function() {
@@ -50,7 +52,11 @@ define(['jquery'], function($) {
         var iframe = $('#id_questiontext_ifr');
         var iframeBody = iframe.contents().find('body');
         var textContent = iframeBody.text();
-        var paragraphs = iframeBody.find('p');
+        //var paragraphs = iframeBody.find('p');
+        var paragraphs = iframeBody.find('p').filter(function() {
+          // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+          return $(this).find('img, audio, video').length === 0;
+        });
         // Regular expression to detect the presence of sub-questions in question text.
         var regex = /\{[^}]*[^}]*\}/g;
         var containsGaps = regex.test(textContent);
@@ -58,7 +64,7 @@ define(['jquery'], function($) {
         if (containsGaps) {
           for (let i = 0; i < paragraphs.length; i++) {
             paraText = $(paragraphs[i]).text();
-            const cleanedText = paraText.replace(/\{[^:]+:[^:]+:=(.*?)(#.*?)?\}/g, '$1');
+            const cleanedText = paraText.replace(/\{[^:]+:[^:]+:=(\w+).*?\}/g, '$1');
             $(paragraphs[i]).text(cleanedText);
           }
         }
@@ -77,11 +83,15 @@ define(['jquery'], function($) {
         // Init error divs.
         $('#id_error_button_group_add_gaps_5').html('');
         $('#id_error_button_group_add_gaps_9').html('');
+        var skipcapswords = skipcapswordscheck.prop('checked');
         const capsWords = new Array();
         var iframe = $('#id_questiontext_ifr');
         var iframeBody = iframe.contents().find('body');
         var textContent = iframeBody.text();
-        var paragraphs = iframeBody.find('p');
+        var paragraphs = iframeBody.find('p').filter(function() {
+          // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+          return $(this).find('img, audio, video').length === 0;
+        });
         // Regular expression to detect the presence of sub-questions in question text.
         var pattern = /\{[^}]*[^}]*\}/g;
         // Check if the pattern matches the string
@@ -116,7 +126,7 @@ define(['jquery'], function($) {
                   word = word.slice(0, -1); // Remove the punctuation from the word
               }
               // Check if the word starts with a capital letter
-              if (word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])) {
+              if (skipcapswords && word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])) {
                 // If the word starts with a capital letter, skip the gapping transformation
                 // Do not skip the gapping transformation if capitalised word has already been gapped.
                 if (!capsWords.includes(word)) {

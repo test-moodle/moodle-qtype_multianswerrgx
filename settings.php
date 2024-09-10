@@ -15,24 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the multi-answer question type.
+ * Data to control defaults when creating and running a question
  *
  * @package    qtype_multianswerrgx
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  2024 Joseph Rézeau
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'qtype_multianswerrgx';
-$plugin->version   = 2024091002;
-
-$plugin->requires  = 2024041600;
-$plugin->dependencies = [
-    'qtype_regexp'      => 2024062600,
-    'qtype_multichoice' => 2024041600,
-    'qtype_numerical'   => 2024041600,
-    'qtype_shortanswer' => 2024041600,
-];
-
-$plugin->maturity  = MATURITY_STABLE;
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configcheckbox('qtype_multianswerrgx/addclozegaps',
+    get_string('addgapslabel', 'qtype_multianswerrgx'), get_string('addgapslabel', 'qtype_multianswerrgx'), 0));
+}

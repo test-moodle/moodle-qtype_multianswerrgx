@@ -103,7 +103,7 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
         $mform = $this->form_setup($mform);
-
+        $defaultaddclozegaps = get_config('qtype_multianswerrgx', 'addclozegaps');
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('reload', PARAM_INT);
 
@@ -112,16 +112,20 @@ class qtype_multianswerrgx_edit_form extends question_edit_form {
         $this->confirm = optional_param('confirm', false, PARAM_BOOL);
 
         $insertbefore = 'status'; // Moodle 4.x.
-        $buttonarray = [];
-        $buttonarray[] = $mform->createElement('button', 'add_gaps_5', get_string('addclozegaps5', 'qtype_multianswerrgx'));
-        $buttonarray[] = $mform->createElement('button', 'add_gaps_9', get_string('addclozegaps9', 'qtype_multianswerrgx'));
-        $buttonarray[] = $mform->createElement('button', 'remove_gaps_button', get_string('removegaps', 'qtype_multianswerrgx'));
+        if ($defaultaddclozegaps) {
+            $buttonarray = [];
+            $buttonarray[] = $mform->createElement('button', 'add_gaps_5', get_string('addclozegaps5', 'qtype_multianswerrgx'));
+            $buttonarray[] = $mform->createElement('button', 'add_gaps_9', get_string('addclozegaps9', 'qtype_multianswerrgx'));
+            $buttonarray[] = $mform->createElement('button', 'remove_gaps_button',
+              get_string('removegaps', 'qtype_multianswerrgx'));
+            $buttonarray[] = $mform->createElement('checkbox', 'skip_caps_words',
+              get_string('skipcapswords', 'qtype_multianswerrgx'));
 
-        // Insert the button group after the 'questiontext' field.
-        $mform->insertElementBefore($mform->createElement('group', 'button_group',
-          get_string('addgapslabel', 'qtype_multianswerrgx'), $buttonarray, ' '), $insertbefore);
-        $mform->addHelpButton('button_group', 'addgapslabel', 'qtype_multianswerrgx');
-
+            // Insert the button group after the 'questiontext' field.
+            $mform->insertElementBefore($mform->createElement('group', 'button_group',
+            get_string('addgapslabel', 'qtype_multianswerrgx'), $buttonarray, ' '), $insertbefore);
+            $mform->addHelpButton('button_group', 'addgapslabel', 'qtype_multianswerrgx');
+        };
         // Display the questions from questiontext.
         if ($questiontext = optional_param_array('questiontext', false, PARAM_RAW)) {
             $this->questiondisplay = fullclone(qtype_multianswerrgx_extract_question($questiontext));
