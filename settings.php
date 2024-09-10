@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('qtype_multianswerrgx/addclozegaps',
-    get_string('addgapslabel', 'qtype_multianswerrgx'), get_string('addgapslabel', 'qtype_multianswerrgx'), 0));
+    get_string('addgapslabel', 'qtype_multianswerrgx'), get_string('addgaps_help', 'qtype_multianswerrgx'), 0));
 }
