@@ -34,6 +34,10 @@ define(['jquery'], function($) {
           color: 'red',
         });
       }
+      // Find out which text editor is in use.
+      const attoIsLive = $('.editor_atto').length > 0;
+      const tinymceIsLive = !attoIsLive;
+
       // Check the state of the Checkbox to enable skipping capitalised words or not.
       var skipcapswordscheck = $('#id_button_group_skip_caps_words');
 
@@ -49,14 +53,17 @@ define(['jquery'], function($) {
 
       /* A click on the Remove gaps button. */
       $('#id_button_group_remove_gaps_button').on('click', function() {
-        var iframe = $('#id_questiontext_ifr');
-        var iframeBody = iframe.contents().find('body');
-        var textContent = iframeBody.text();
-        //var paragraphs = iframeBody.find('p');
-        var paragraphs = iframeBody.find('p').filter(function() {
-          // Exclude paragraphs that contain <img>, <audio>, or <video> tags
-          return $(this).find('img, audio, video').length === 0;
-        });
+        if (tinymceIsLive) {
+          var iframe = $('#id_questiontext_ifr');
+          var iframeBody = iframe.contents().find('body');
+          var textContent = iframeBody.text();
+          var paragraphs = iframeBody.find('p').filter(function() {
+            // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+            return $(this).find('img, audio, video').length === 0;
+          });
+        } else {
+          //const divHTML = document.getElementById("id_questiontexteditable").innerHTML;
+        }
         // Regular expression to detect the presence of sub-questions in question text.
         var regex = /\{[^}]*[^}]*\}/g;
         var containsGaps = regex.test(textContent);
@@ -85,14 +92,29 @@ define(['jquery'], function($) {
         $('#id_error_button_group_add_gaps_9').html('');
         var skipcapswords = skipcapswordscheck.prop('checked');
         const capsWords = new Array();
-        var iframe = $('#id_questiontext_ifr');
-        var iframeBody = iframe.contents().find('body');
-        var textContent = iframeBody.text();
-        var paragraphs = iframeBody.find('p').filter(function() {
-          // Exclude paragraphs that contain <img>, <audio>, or <video> tags
-          return $(this).find('img, audio, video').length === 0;
-        });
+        var textContent;
+        let enoughWords;
+        if (tinymceIsLive) {
+          var iframe = $('#id_questiontext_ifr');
+          var iframeBody = iframe.contents().find('body');
+          textContent = iframeBody.text();
+          var paragraphs = iframeBody.find('p').filter(function() {
+            // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+            return $(this).find('img, audio, video').length === 0;
+          });
+        } else if (attoIsLive) {
+          // Get the div element by ID
+          var editorContent = $('#id_questiontexteditable');
+          var $divContent = $('<div>').html(editorContent.html());
+          textContent = $divContent.text();
+          // Find paragraphs that don't contain img, audio, or video tags
+          var paragraphs = $divContent.find('p').filter(function() {
+              // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+              return $(this).find('img, audio, video').length === 0;
+          });
+        }
         // Regular expression to detect the presence of sub-questions in question text.
+        console.log('textContent = ' + textContent);
         var pattern = /\{[^}]*[^}]*\}/g;
         // Check if the pattern matches the string
         if (pattern.test(textContent)) {
@@ -102,8 +124,19 @@ define(['jquery'], function($) {
           ));
           return;
         }
-        let totalWords = textContent.split(' ');
-        if (totalWords.length < interval) {
+        // Check if there are enough words at least in one "gappable" paragraph.
+        let totalWords = 0;
+        let paratext;
+        for (let i = 0; i < paragraphs.length; i++) {
+          paratext = $(paragraphs[i]).text();
+          totalWords = paratext.split(' ');
+          enoughWords = false;
+          if (totalWords.length > interval) {
+            enoughWords = true;
+            continue;
+          }
+        }
+        if (!enoughWords) {
           $('#id_error_button_group_add_gaps_' + interval).html(M.util.get_string(
             'tooshortforgapserror',
             'qtype_multianswerrgx'
@@ -112,6 +145,7 @@ define(['jquery'], function($) {
         }
         for (let i = 0; i < paragraphs.length; i++) {
           let paraText = $(paragraphs[i]).text();
+          paraText = paraText.replace(/\s+/g, ' ').trim();
           let words = paraText.split(' ');
           // With many thanks to Mark Johnson for this script.
           // Loop through the words and enclose every 5th or 9th word in SHORTANSWER marker.
@@ -142,11 +176,20 @@ define(['jquery'], function($) {
           }
           // Join the words back into a single string
           let gappedText = words.join(' ');
+          console.log('gappedText = ' + gappedText);
           if (gappedText !== '') {
             $(paragraphs[i]).text(gappedText);
           }
           $('#id_button_group_remove_gaps_button').prop('disabled', false);
         }
+        /*
+        // Apply text manipulation to the paragraphs
+        paragraphs.each(function() {
+            $(this).text('gappedText');  // 'gappedText' should be the modified content you want to insert
+        });
+*/
+        // Set the modified content back to the ATTO editor
+        //editorContent.html($divContent.html());
       }
     }
   };
