@@ -30,6 +30,8 @@ define(['jquery'], function($) {
       let textContent;
       let $divContent;
       let editorContent;
+      let attoIsLive;
+      let tinymceIsLive;
       let indexes = [5, 9];
       for (let i = 0; i < indexes.length; i++) {
         $('#id_error_button_group_add_gaps_' + indexes[i]).css({
@@ -37,10 +39,6 @@ define(['jquery'], function($) {
           color: 'red',
         });
       }
-      // Find out which text editor is in use.
-      const attoIsLive = $('.editor_atto').length > 0;
-      const tinymceIsLive = !attoIsLive;
-
       // Check the state of the Checkbox to enable skipping capitalised words or not.
       var skipcapswordscheck = $('#id_button_group_skip_caps_words');
 
@@ -56,6 +54,9 @@ define(['jquery'], function($) {
 
       /* A click on the Remove gaps button. */
       $('#id_button_group_remove_gaps_button').on('click', function() {
+        // Find out which text editor is in use.
+        attoIsLive = $('.editor_atto').length > 0;
+        tinymceIsLive = !attoIsLive;
         if (tinymceIsLive) {
           var iframe = $('#id_questiontext_ifr');
           var iframeBody = iframe.contents().find('body');
@@ -97,11 +98,14 @@ define(['jquery'], function($) {
       });
 
       /**
-       * Encloses every nth word in SHORTANSWER code, keeping punctuation outside the brackets.
+       * Encloses every nth word in square brackets, keeping punctuation outside the brackets.
        * @param {number} interval - The interval at which to enclose words in brackets.
        * @returns {string} The modified text with every nth word enclosed in brackets.       *
        */
       function createGaps(interval) {
+        // Find out which text editor is in use.
+        attoIsLive = $('.editor_atto').length > 0;
+        tinymceIsLive = !attoIsLive;
         // Init error divs.
         $('#id_error_button_group_add_gaps_5').html('');
         $('#id_error_button_group_add_gaps_9').html('');
