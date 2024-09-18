@@ -80,10 +80,11 @@ define(['jquery'], function($) {
         var regex = /\{[^}]*[^}]*\}/g;
         var containsGaps = regex.test(textContent);
         let paraText;
+        let cleanedText;
         if (containsGaps) {
           for (let i = 0; i < paragraphs.length; i++) {
             paraText = $(paragraphs[i]).text();
-            const cleanedText = paraText.replace(/\{[^:]+:[^:]+:=(\w+).*?\}/g, '$1');
+            cleanedText = paraText.replace(/{[^=]*(=|%100%)([^#}]*)[^}]*}/g, '$2');
             $(paragraphs[i]).text(cleanedText);
           }
         }
