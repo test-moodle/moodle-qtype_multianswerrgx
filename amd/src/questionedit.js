@@ -28,10 +28,6 @@ define(['jquery'], function($) {
       // Init the css for the error divs.
       let paragraphs;
       let textContent;
-      let $divContent;
-      let editorContent;
-      let attoIsLive;
-      let tinymceIsLive;
       let indexes = [5, 9];
       for (let i = 0; i < indexes.length; i++) {
         $('#id_error_button_group_add_gaps_' + indexes[i]).css({
@@ -54,28 +50,13 @@ define(['jquery'], function($) {
 
       /* A click on the Remove gaps button. */
       $('#id_button_group_remove_gaps_button').on('click', function() {
-        // Find out which text editor is in use.
-        attoIsLive = $('.editor_atto').length > 0;
-        tinymceIsLive = !attoIsLive;
-        if (tinymceIsLive) {
-          var iframe = $('#id_questiontext_ifr');
-          var iframeBody = iframe.contents().find('body');
-          textContent = iframeBody.text();
-          paragraphs = iframeBody.find('p').filter(function() {
-            // Exclude paragraphs that contain <img>, <audio>, or <video> tags
-            return $(this).find('img, audio, video').length === 0;
-          });
-        } else if (attoIsLive) {
-          // Get the div element by ID
-          editorContent = $('#id_questiontexteditable');
-          $divContent = $('<div>').html(editorContent.html());
-          textContent = $divContent.text();
-          // Find paragraphs that don't contain img, audio, or video tags
-          paragraphs = $divContent.find('p').filter(function() {
-              // Exclude paragraphs that contain <img>, <audio>, or <video> tags
-              return $(this).find('img, audio, video').length === 0;
-          });
-        }
+        var iframe = $('#id_questiontext_ifr');
+        var iframeBody = iframe.contents().find('body');
+        textContent = iframeBody.text();
+        paragraphs = iframeBody.find('p').filter(function() {
+          // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+          return $(this).find('img, audio, video').length === 0;
+        });
         // Regular expression to detect the presence of sub-questions in question text.
         var regex = /\{[^}]*[^}]*\}/g;
         var containsGaps = regex.test(textContent);
@@ -87,10 +68,6 @@ define(['jquery'], function($) {
             cleanedText = paraText.replace(/{[^=]*(=|%100%)([^#}]*)[^}]*}/g, '$2');
             $(paragraphs[i]).text(cleanedText);
           }
-        }
-        // Set the modified content back to the ATTO editor
-        if (attoIsLive) {
-          editorContent.html($divContent.html());
         }
         $('#id_button_group_remove_gaps_button').prop('disabled', true);
         $('#id_error_button_group_add_gaps_5').html('');
@@ -104,34 +81,19 @@ define(['jquery'], function($) {
        * @returns {string} The modified text with every nth word enclosed in brackets.       *
        */
       function createGaps(interval) {
-        // Find out which text editor is in use.
-        attoIsLive = $('.editor_atto').length > 0;
-        tinymceIsLive = !attoIsLive;
         // Init error divs.
         $('#id_error_button_group_add_gaps_5').html('');
         $('#id_error_button_group_add_gaps_9').html('');
         var skipcapswords = skipcapswordscheck.prop('checked');
         const capsWords = new Array();
         let enoughWords;
-        if (tinymceIsLive) {
-          var iframe = $('#id_questiontext_ifr');
-          var iframeBody = iframe.contents().find('body');
-          textContent = iframeBody.text();
-          paragraphs = iframeBody.find('p').filter(function() {
-            // Exclude paragraphs that contain <img>, <audio>, or <video> tags
-            return $(this).find('img, audio, video').length === 0;
-          });
-        } else if (attoIsLive) {
-          // Get the div element by ID
-          editorContent = $('#id_questiontexteditable');
-          $divContent = $('<div>').html(editorContent.html());
-          textContent = $divContent.text();
-          // Find paragraphs that don't contain img, audio, or video tags
-          paragraphs = $divContent.find('p').filter(function() {
-              // Exclude paragraphs that contain <img>, <audio>, or <video> tags
-              return $(this).find('img, audio, video').length === 0;
-          });
-        }
+        var iframe = $('#id_questiontext_ifr');
+        var iframeBody = iframe.contents().find('body');
+        textContent = iframeBody.text();
+        paragraphs = iframeBody.find('p').filter(function() {
+          // Exclude paragraphs that contain <img>, <audio>, or <video> tags
+          return $(this).find('img, audio, video').length === 0;
+        });
         // Regular expression to detect the presence of sub-questions in question text.
         var pattern = /\{[^}]*[^}]*\}/g;
         // Check if the pattern matches the string
@@ -178,15 +140,14 @@ define(['jquery'], function($) {
                   word = word.slice(0, -1); // Remove the punctuation from the word
               }
               // Check if the word starts with a capital letter
-              if (skipcapswords && word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])) {
+              if (skipcapswords && word && word[0] === word[0].toUpperCase() && /[A-Za-z]/.test(word[0])
+                  && !capsWords.includes(word)) {
                 // If the word starts with a capital letter, skip the gapping transformation
                 // Do not skip the gapping transformation if capitalised word has already been gapped.
-                if (!capsWords.includes(word)) {
                 offset -= 1;
                 // Add new capitalised word to the capsWords list.
                 capsWords.push(word);
                 continue;
-                }
               }
               // Enclose the word in SHORTANSWER (SA) brackets, then add back the punctuation
               words[index] = `{1:SA:=${word}}${punctuation}`;
@@ -198,10 +159,6 @@ define(['jquery'], function($) {
             $(paragraphs[i]).text(gappedText);
           }
           $('#id_button_group_remove_gaps_button').prop('disabled', false);
-        }
-        // Set the modified content back to the ATTO editor
-        if (attoIsLive) {
-          editorContent.html($divContent.html());
         }
       }
     }
