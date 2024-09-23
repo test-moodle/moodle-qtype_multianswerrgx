@@ -32,5 +32,4 @@ Feature: Test creating a Multianswerrgx (Cloze) question in Atto editor
     And I set the field "Question name" to "multianswer-01"
     And I should see "No cloze gaps?"
     And I should not see "Add close gaps"
-    And I pause
     And I log out
