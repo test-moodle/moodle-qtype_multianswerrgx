@@ -70,7 +70,7 @@ jobs:
 
       - name: Install moodle-plugin-ci
         run: |
-          moodle-plugin-ci add-plugin --branch master rezeau/moodle-qtype_regexp
+          moodle-plugin-ci add-plugin --branch main rezeau/moodle-qtype_regexp
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
           DB: ${{ matrix.database }}
