@@ -41,6 +41,9 @@ jobs:
           - php: '8.1'
             moodle-branch: 'MOODLE_404_STABLE'
             database: 'mariadb'
+            php: '8.1'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: 'mariadb'
 
     steps:
       - name: Check out repository code
@@ -67,7 +70,6 @@ jobs:
 
       - name: Install moodle-plugin-ci
         run: |
-          moodle-plugin-ci add-plugin --branch master iarenaza/moodle-filter_multilang2
           moodle-plugin-ci add-plugin --branch master rezeau/moodle-qtype_regexp
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
