@@ -34,5 +34,5 @@ $plugin->dependencies = [
     'qtype_numerical'   => 2024041600,
     'qtype_shortanswer' => 2024041600,
 ];
-
+$plugin->release   = '4.5';
 $plugin->maturity  = MATURITY_STABLE;
